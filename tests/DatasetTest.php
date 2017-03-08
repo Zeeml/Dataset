@@ -1,14 +1,14 @@
 <?php
 
-use Zeeml\Algorithms\Dataset;
+use Zeeml\Dataset\Dataset;
 use PHPUnit\Framework\TestCase;
+use Zeeml\Dataset\Processor\AbstractProcessor;
 
 /**
  * Dataset test case.
  */
 class DatasetTest extends TestCase
 {
-
     /**
      *
      * @var Dataset
@@ -21,7 +21,10 @@ class DatasetTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->dataset = new Dataset(__DIR__ . '/fixtures/LinearRegressionExample.csv');
+        $this->dataset = Dataset::factory(
+            __DIR__ . '/fixtures/data.csv', 
+            Dataset::PREDICTION
+        );
     }
 
     /**
@@ -30,24 +33,31 @@ class DatasetTest extends TestCase
     protected function tearDown()
     {
         $this->dataset = null;
-        
         parent::tearDown();
     }
 
     /**
-     * Tests Dataset->read()
+     * @test
      */
-    public function testRead()
+    public function method_size_return_an_integer()
     {
-        $this->dataset->read();
+        $this->assertEquals(10, $this->dataset->size());
     }
 
     /**
-     * Tests Dataset->getData()
+     * @test
      */
-    public function testGetData()
+    public function method_get_returns_a_data_array()
     {
-        $this->assertInternalType('array', $this->dataset->read()->getData());
-        $this->assertEquals(16, count($this->dataset->getData()));
+        $this->assertInternalType('array', $this->dataset->get());
+        $this->assertEquals(10, count($this->dataset->get()));
+    }
+    
+    /**
+     * @test
+     */
+    public function method_processor_returns_an_instance_of_a_processor()
+    {
+        $this->assertInstanceOf(AbstractProcessor::class, $this->dataset->processor());
     }
 }
