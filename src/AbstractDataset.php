@@ -40,13 +40,6 @@ class AbstractDataset implements DatasetInterface, \Iterator
         return $this->processor->size();
     }
     
-    public function each($algorithm)
-    {
-        foreach ($this->instances as $instance) {
-            $algorithm->train($instance);
-        }
-    }
-    
     /**
      * Prepare data to be trained
      * @param int $inputs
