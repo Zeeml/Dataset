@@ -39,7 +39,7 @@ class DatasetTest extends TestCase
     /**
      * @test
      */
-    public function method_size_return_an_integer()
+    public function method_size_returns_an_integer()
     {
         $this->assertEquals(10, $this->dataset->size());
     }
@@ -59,5 +59,15 @@ class DatasetTest extends TestCase
     public function method_processor_returns_an_instance_of_a_processor()
     {
         $this->assertInstanceOf(AbstractProcessor::class, $this->dataset->processor());
+    }
+    
+    /**
+     * @test
+     */
+    public function method_prepare_sets_a_proper_array_of_instances()
+    {
+        $this->dataset->prepare(1,1);
+        $this->assertInternalType('array', $this->dataset->instances());
+        $this->assertEquals(10, count($this->dataset->instances()));
     }
 }

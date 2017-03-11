@@ -42,10 +42,10 @@ class AbstractDataset implements DatasetInterface, \Iterator
     
     /**
      * Prepare data to be trained
-     * @param int $inputs
+     * @param int $dimensions
      * @param int $outputs
      */
-    public function prepare(int $inputs = 1, int $outputs = 1)
+    public function prepare(int $dimensions = 1, int $outputs = 1)
     {
         // @todo check that $input+$outputs matches data columns
         
@@ -53,10 +53,15 @@ class AbstractDataset implements DatasetInterface, \Iterator
         $this->instances = [];
         foreach ($this->data as $val) {
             $this->instances[] = new Instance(
-                array_slice($val, 0, $inputs),
-                array_slice($inputs, $inputs + $outputs)
+                array_slice($val, 0, $dimensions),
+                array_slice($val, $dimensions, $outputs)
             );
         }
+    }
+    
+    public function instances()
+    {
+        return $this->instances;
     }
 
     /**
