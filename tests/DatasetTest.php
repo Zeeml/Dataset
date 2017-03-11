@@ -3,6 +3,7 @@
 use Zeeml\Dataset\Dataset;
 use PHPUnit\Framework\TestCase;
 use Zeeml\Dataset\Processor\AbstractProcessor;
+use Zeeml\Dataset\Dataset\Instance;
 
 /**
  * Dataset test case.
@@ -66,8 +67,25 @@ class DatasetTest extends TestCase
      */
     public function method_prepare_sets_a_proper_array_of_instances()
     {
-        $this->dataset->prepare(1,1);
+        $this->dataset->prepare(1,2);
         $this->assertInternalType('array', $this->dataset->instances());
         $this->assertEquals(10, count($this->dataset->instances()));
+        
+        
+        $this->assertInstanceOf(Instance::class, $this->dataset->instance(0));
+        $this->assertEquals(1, count($this->dataset->instance(0)->inputs()));
+        $this->assertEquals(2, count($this->dataset->instance(0)->outputs()));
+        
+        $this->assertFalse($this->dataset->instance(10));
+        
+    }
+    
+    /**
+     * @test
+     * @expectedException Zeeml\Dataset\Exception\DatasetPreparationException
+     */
+    public function method_prepare_fails_whith_bad_params()
+    {
+        $this->dataset->prepare(3,1);
     }
 }
