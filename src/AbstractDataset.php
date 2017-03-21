@@ -5,6 +5,7 @@ namespace Zeeml\Dataset;
 use Zeeml\Dataset\Processor\ProcessorInterface;
 use Zeeml\Dataset\Dataset\Instance;
 use Zeeml\Dataset\Exception\DatasetPreparationException;
+use Zeeml\Dataset\Dataset\Mapper;
 
 class AbstractDataset implements DatasetInterface, \Iterator
 {
@@ -16,9 +17,11 @@ class AbstractDataset implements DatasetInterface, \Iterator
     
     protected $processor;
     
-    protected $inputs;
+    protected $dimensions;
     
     protected $outputs;
+    
+    protected $mapper;
     
     public function __construct(ProcessorInterface $processor)
     {
@@ -43,30 +46,13 @@ class AbstractDataset implements DatasetInterface, \Iterator
     
     /**
      * Prepare data to be trained
-     * @param int $dimensions
-     * @param int $outputs
+     * @param Mapper $mapper Data Mapper
      * @param bool $preserveKeys whether to preserve data keys (default is false)
      */
-    public function prepare(int $dimensions = 1, int $outputs = 1, bool $preserverKeys = false)
-    {
-        // @todo check that $input+$outputs matches data columns
-        
+    public function prepare(Mapper $mapper, bool $preserveKeys = false)
+    {   $this->mapper = $mapper;
         $this->data = $this->get();
-        $this->instances = [];
-        foreach ($this->data as $key => $val) {
-            $instance = new Instance(
-                array_slice($val, 0, $dimensions, $preserverKeys),
-                array_slice($val, $dimensions, $outputs, $preserverKeys)
-            );
-
-            if (count($instance->outputs()) == 0) {
-                throw new DatasetPreparationException(
-                    sprintf("Data entry %d has wrong parameters count", $key)
-                );
-            }
-            
-            $this->instances[] = $instance;
-        }
+        $this->instances = $this->mapper->instancesFactory($this->data, $preserveKeys);
     }
     
     /**
