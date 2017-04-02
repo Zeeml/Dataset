@@ -28,6 +28,9 @@ class Mapper
             $dimensions = $outputs = [];
             
             foreach ($this->dimensionKeys as $dKey) {
+                if (! isset($val[$dKey])) {
+                    throw new DatasetPreparationException("No data on key $dKey");
+                }
                 $dimensions[$preserveKeys ? $dKey : count($dimensions)] = $val[$dKey];
             }
             
