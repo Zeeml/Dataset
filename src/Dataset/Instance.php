@@ -4,23 +4,48 @@ namespace Zeeml\Dataset\Dataset;
 
 class Instance
 {
-    protected $inputs;
+    /**
+     * 
+     * @var array
+     */
+    protected $dimensions;
     
+    /**
+     * 
+     * @var array
+     */
     protected $outputs;
     
+    /**
+     * 
+     * @var array
+     */
     protected $results;
     
-    public function __construct(array $inputs, array $outputs)
+    /**
+     * Class constructor
+     * @param array $dimensions
+     * @param array $outputs
+     */
+    public function __construct(array $dimensions, array $outputs)
     {
-        $this->inputs = $inputs;
+        $this->dimensions = $dimensions;
         $this->outputs = $outputs;
     }
     
-    public function inputs() : array
+    /**
+     * Return the instance dimensions as an array
+     * @return array
+     */
+    public function dimensions() : array
     {
-        return $this->inputs;
+        return $this->dimensions;
     }
     
+    /**
+     * Return the instance outputs (predictions or classifications) as an array
+     * @return array
+     */
     public function outputs() : array
     {
         return $this->outputs;
