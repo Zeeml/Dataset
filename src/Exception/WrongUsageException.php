@@ -2,6 +2,6 @@
 
 namespace Zeeml\DataSet\Exception;
 
-class FileNotFoundException extends \Exception
+class WrongUsageException extends \Exception
 {
 }

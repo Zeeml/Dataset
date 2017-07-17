@@ -1,28 +1,37 @@
 <?php
 
-namespace Zeeml\Dataset\Processor;
+namespace Zeeml\DataSet\Processor;
 
 use League\Csv\Reader;
+use Zeeml\DataSet\Exception\FileNotFoundException;
 
 class CsvProcessor extends AbstractProcessor
 {
-    public function read()
+    public function __construct(string $source)
     {
-        if ($this->uri) {
-            $reader = Reader::createFromPath($this->uri);
-            $reader->stripBom(true);
-            $reader->setOffset(1);
-            $this->data = [];
-            $reader->each(function($line) {
-                $this->data[] = $line;
-                return true;
-            });
+        parent::__construct($source);
+    }
+
+    public function read(): ProcessorInterface
+    {
+        if (!is_file($this->source)) {
+            throw new FileNotFoundException('File ' . $this->source . ' was not found');
         }
-    
+
+        $reader = Reader::createFromPath($this->source);
+        $reader->stripBom(true);
+        $reader->setOffset(1);
+        $this->data = [];
+        $reader->each(function($line) {
+            $this->data[] = $line;
+
+            return true;
+        });
+
         return $this;
     }
     
-    public function write()
+    public function write(): bool
     {
         return true;
     }
