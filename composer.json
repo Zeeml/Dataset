@@ -1,6 +1,6 @@
 {
   "name" : "zeeml/dataset",
-  "description" : "A multi-purpose Dataset for Machine Learning algorithms training",
+  "description" : "A multi-purpose DataSet for Machine Learning algorithms training",
   "license": "MIT",
   "require" : {
     "php" : ">=7.0.0",
@@ -15,13 +15,13 @@
   } ],
   "autoload-dev" : {
     "psr-4" : {
-      "Zeeml\\Dataset\\" : "src/",
-      "Zeeml\\Dataset\\Tests\\" : "tests/fixtures"
+      "Zeeml\\DataSet\\" : "src/",
+      "Zeeml\\DataSet\\Tests\\" : "tests/fixtures"
     }
   },
   "autoload" : {
     "psr-4" : {
-      "Zeeml\\Dataset\\" : "src/"
+      "Zeeml\\DataSet\\" : "src/"
     }
   },
   "authors" : [ {
