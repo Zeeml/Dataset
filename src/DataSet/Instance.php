@@ -1,25 +1,11 @@
 <?php
 
-namespace Zeeml\Dataset\Dataset;
+namespace Zeeml\DataSet\DataSet;
 
 class Instance
 {
-    /**
-     * 
-     * @var array
-     */
     protected $dimensions;
-    
-    /**
-     * 
-     * @var array
-     */
     protected $outputs;
-    
-    /**
-     * 
-     * @var array
-     */
     protected $results;
     
     /**
@@ -41,7 +27,17 @@ class Instance
     {
         return $this->dimensions;
     }
-    
+
+    /**
+     * Return the instance dimensions as an array
+     * @param int $index
+     * @return mixed|null
+     */
+    public function dimension(int $index)
+    {
+        return $this->dimensions[$index] ?? null;
+    }
+
     /**
      * Return the instance outputs (predictions or classifications) as an array
      * @return array
@@ -50,10 +46,26 @@ class Instance
     {
         return $this->outputs;
     }
-    
-    public function result($result)
+
+    /**
+     * Return the instance outputs (predictions or classifications) as an array
+     * @param int $index
+     * @return array
+     */
+    public function output(int $index) : array
     {
-        $this->results[] = $result;
+        return $this->outputs[$index] ?? null;
+    }
+
+    /**
+     * @param string $key
+     * @param $result
+     * @return $this
+     */
+    public function addResult(string $key, $result)
+    {
+        $this->results[$key] = $result;
+
         return $this;
     }
     
