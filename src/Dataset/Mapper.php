@@ -1,8 +1,8 @@
 <?php
 
-namespace Zeeml\DataSet\DataSet;
+namespace Zeeml\Dataset\Dataset;
 
-use Zeeml\DataSet\Exception\DataSetPreparationException;
+use Zeeml\Dataset\Exception\DatasetPreparationException;
 
 class Mapper
 {
@@ -29,13 +29,13 @@ class Mapper
             
             foreach ($this->dimensionKeys as $dKey) {
                 if (! isset($val[$dKey])) {
-                    throw new DataSetPreparationException("No data on key $dKey");
+                    throw new DatasetPreparationException("No data on key $dKey");
                 }
                 $dimensions[$preserveKeys ? $dKey : count($dimensions)] = $val[$dKey];
             }
             
             if (count($dimensions) == 0) {
-                throw new DataSetPreparationException(
+                throw new DatasetPreparationException(
                     sprintf("Data entry %d has wrong parameters count", $key)
                 );
             }

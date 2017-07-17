@@ -1,7 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use Zeeml\DataSet\DataSet\Instance;
+use Zeeml\Dataset\Dataset\Instance;
 
 /**
  * Instance test case.

@@ -1,11 +1,25 @@
 <?php
 
-namespace Zeeml\DataSet\DataSet;
+namespace Zeeml\Dataset\Dataset;
 
 class Instance
 {
+    /**
+     * 
+     * @var array
+     */
     protected $dimensions;
+    
+    /**
+     * 
+     * @var array
+     */
     protected $outputs;
+    
+    /**
+     * 
+     * @var array
+     */
     protected $results;
     
     /**
@@ -36,16 +50,10 @@ class Instance
     {
         return $this->outputs;
     }
-
-    /**
-     * @param string $key
-     * @param $result
-     * @return $this
-     */
-    public function addResult(string $key, $result)
+    
+    public function result($result)
     {
-        $this->results[$key] = $result;
-
+        $this->results[] = $result;
         return $this;
     }
     

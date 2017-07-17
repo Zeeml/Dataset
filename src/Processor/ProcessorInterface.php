@@ -1,10 +1,10 @@
 <?php
 
-namespace Zeeml\DataSet\Processor;
+namespace Zeeml\Dataset\Processor;
 
 interface ProcessorInterface
 {
-    public function read(): ProcessorInterface;
+    public function read();
     
-    public function write(): bool;
+    public function write();
 }

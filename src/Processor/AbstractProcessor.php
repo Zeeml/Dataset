@@ -1,39 +1,47 @@
 <?php
 
-namespace Zeeml\DataSet\Processor;
+namespace Zeeml\Dataset\Processor;
 
 abstract class AbstractProcessor implements ProcessorInterface
 {
-    protected $source;
+    protected $uri;
+    
     protected $data;
-    protected $size = 0;
-
-    public function __construct($source)
+    
+    public function __construct($uri = null)
     {
-        $this->source = $source;
+        $this->uri = $uri;
     }
-
-    public function data(): array
+    
+    public function data()
     {
         $this->populate();
-
         return $this->data;
     }
     
-    public function size(): int
+    public function size()
     {
         $this->populate();
-
-        return $this->size;
+        return count($this->data());
     }
 
-    public function populate(): ProcessorInterface
+    public function populate()
     {
         if (is_null($this->data)) {
             $this->read();
-            $this->size = count($this->data?? []);
         }
-
+        
         return $this;
     }
+    
+    
+    /**
+     *
+     * {@inheritdoc}
+     *
+     * @see \Zeeml\Dataset\Processor\ProcessorInterface::read()
+     */
+    abstract public function read();
+    
+    abstract public function write();
 }

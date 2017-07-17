@@ -1,6 +1,6 @@
 <?php
 
-namespace Zeeml\DataSet\Exception;
+namespace Zeeml\Dataset\Exception;
 
 class FileNotFoundException extends \Exception
 {
