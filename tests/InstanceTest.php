@@ -21,7 +21,7 @@ class InstanceTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->instance = new Instance([0,1,2], [3,4]);
+        $this->instance = new Instance([9,8,7], [6,5]);
     }
 
     /**
@@ -40,7 +40,7 @@ class InstanceTest extends TestCase
     public function method_dimensions_returns_an_array()
     {
         $this->assertInternalType('array', $this->instance->dimensions());
-        $this->assertEquals([0,1,2], $this->instance->dimensions());
+        $this->assertEquals([9,8,7], $this->instance->dimensions());
     }
 
     /**
@@ -50,7 +50,30 @@ class InstanceTest extends TestCase
     public function method_outputs_returns_an_array()
     {
         $this->assertInternalType('array', $this->instance->outputs());
-        $this->assertEquals([3,4], $this->instance->outputs());
+        $this->assertEquals([6,5], $this->instance->outputs());
+    }
+
+    /**
+     * Tests Instance->dimension($index)
+     * @test
+     */
+    public function method_output_returns_an_element()
+    {
+        $this->assertEquals(6, $this->instance->output(0));
+        $this->assertEquals(5, $this->instance->output(1));
+        $this->assertNull($this->instance->output(3));
+    }
+
+    /**
+     * Tests Instance->output($index)
+     * @test
+     */
+    public function method_dimension_returns_an_element()
+    {
+        $this->assertEquals(9, $this->instance->dimension(0));
+        $this->assertEquals(8, $this->instance->dimension(1));
+        $this->assertEquals(7, $this->instance->dimension(2));
+        $this->assertNull($this->instance->dimension(3));
     }
 
     /**

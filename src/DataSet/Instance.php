@@ -52,7 +52,7 @@ class Instance
      * @param int $index
      * @return array
      */
-    public function output(int $index) : array
+    public function output(int $index)
     {
         return $this->outputs[$index] ?? null;
     }
