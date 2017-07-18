@@ -68,9 +68,23 @@ class Instance
 
         return $this;
     }
-    
+
+    /**
+     * returns all hte results
+     * @return array
+     */
     public function results() : array
     {
         return $this->results;
+    }
+
+    /**
+     * returns a result for a given key
+     * @param string $key
+     * @return null
+     */
+    public function result(string $key)
+    {
+        return $this->results[$key] ?? null;
     }
 }
