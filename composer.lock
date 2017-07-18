@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "cc9c5e2ab3cb15aba7d75ddad1372e3f",
+    "content-hash": "db1f961168cd69d142df6057e24932a6",
     "packages": [
         {
             "name": "league/csv",

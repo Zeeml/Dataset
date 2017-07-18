@@ -1,28 +1,22 @@
 <?php
 
-namespace Zeeml\Dataset;
+namespace Zeeml\DataSet;
 
-use Zeeml\Dataset\Processor\ProcessorInterface;
-use Zeeml\Dataset\Dataset\Instance;
-use Zeeml\Dataset\Exception\DatasetPreparationException;
-use Zeeml\Dataset\Dataset\Mapper;
+use Zeeml\DataSet\Processor\ProcessorInterface;
+use Zeeml\DataSet\DataSet\Instance;
+use Zeeml\DataSet\Exception\DataSetPreparationException;
+use Zeeml\DataSet\DataSet\Mapper;
 
-class AbstractDataset implements DatasetInterface, \Iterator
+class AbstractDataSet implements DataSetInterface, \Iterator
 {
     protected $data;
-    
     protected $position;
-    
     protected $instances;
-    
     protected $processor;
-    
     protected $dimensions;
-    
     protected $outputs;
-    
     protected $mapper;
-    
+
     public function __construct(ProcessorInterface $processor)
     {
         $this->processor = $processor;
@@ -50,20 +44,21 @@ class AbstractDataset implements DatasetInterface, \Iterator
      * @param bool $preserveKeys whether to preserve data keys (default is false)
      */
     public function prepare(Mapper $mapper, bool $preserveKeys = false)
-    {   $this->mapper = $mapper;
+    {
+        $this->mapper = $mapper;
         $this->data = $this->get();
         $this->instances = $this->mapper->instancesFactory($this->data, $preserveKeys);
     }
     
     /**
      * Return an array of data instances
-     * @throws DatasetPreparationException
+     * @throws DataSetPreparationException
      * @return array
      */
     public function instances() : array
     {
         if (! is_array($this->instances)) {
-            throw new DatasetPreparationException("prepare() method must be called prior any instances() call");
+            throw new DataSetPreparationException("prepare() method must be called prior any instances() call");
         }
         
         return $this->instances;

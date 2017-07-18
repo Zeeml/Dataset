@@ -1,20 +1,20 @@
 <?php
 
-use Zeeml\Dataset\Dataset;
+use Zeeml\DataSet\DataSetFactory;
 use PHPUnit\Framework\TestCase;
-use Zeeml\Dataset\Processor\AbstractProcessor;
-use Zeeml\Dataset\Dataset\Instance;
-use Zeeml\Dataset\Dataset\Mapper;
-use Zeeml\Dataset\Processor\CsvProcessor;
+use Zeeml\DataSet\Processor\AbstractProcessor;
+use Zeeml\DataSet\DataSet\Instance;
+use Zeeml\DataSet\DataSet\Mapper;
+use Zeeml\DataSet\Processor\CsvProcessor;
 
 /**
- * Dataset test case.
+ * DataSet test case.
  */
-class DatasetTest extends TestCase
+class DataSetTest extends TestCase
 {
     /**
      *
-     * @var Dataset
+     * @var DataSetFactory
      */
     private $dataset;
 
@@ -24,10 +24,7 @@ class DatasetTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->dataset = Dataset::factory(
-            __DIR__ . '/fixtures/data.csv', 
-            Dataset::PREDICTION
-        );
+        $this->dataset = DataSetFactory::create( __DIR__ . '/fixtures/data.csv');
     }
 
     /**
@@ -54,6 +51,21 @@ class DatasetTest extends TestCase
     {
         $this->assertInternalType('array', $this->dataset->get());
         $this->assertEquals(10, count($this->dataset->get()));
+        $this->assertEquals(
+            [
+                [1, 'A', 'I'],
+                [2, 'B', 'II'],
+                [3, 'C ' , 'III'],
+                [4, 'D', 'IV'],
+                [5, 'E', 'V'],
+                [6, 'F', 'VI'],
+                [7, 'G', 'VII'],
+                [8, 'H', 'VIII'],
+                [9, 'I', 'IX'],
+                [10, 'J','X'],
+            ],
+            $this->dataset->get()
+        );
     }
     
     /**
@@ -74,7 +86,7 @@ class DatasetTest extends TestCase
     
     /**
      * @test
-     * @expectedException Zeeml\Dataset\Exception\DatasetPreparationException
+     * @expectedException Zeeml\DataSet\Exception\DataSetPreparationException
      */
     public function direct_call_to_function_instances_fails()
     {
@@ -90,7 +102,7 @@ class DatasetTest extends TestCase
         $this->dataset->prepare($mapper);
         $this->assertInternalType('array', $this->dataset->instances());
         $this->assertEquals(10, count($this->dataset->instances()));
-        
+
         $this->assertInstanceOf(Instance::class, $this->dataset->instance(0));
         
         // any instance should contain two dimensions
@@ -106,7 +118,7 @@ class DatasetTest extends TestCase
     
     /**
      * @test
-     * @expectedException Zeeml\Dataset\Exception\DatasetPreparationException
+     * @expectedException Zeeml\DataSet\Exception\DataSetPreparationException
      */
     public function method_prepare_fails_whith_bad_params()
     {
