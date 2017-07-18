@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "db1f961168cd69d142df6057e24932a6",
+    "content-hash": "b66658c8ab63713a155db19cd260d837",
     "packages": [
         {
             "name": "league/csv",
@@ -62,6 +62,101 @@
                 "write"
             ],
             "time": "2017-02-23T08:25:03+00:00"
+        },
+        {
+            "name": "numphp/numphp",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/NumPHP/NumPHP.git",
+                "reference": "f329edfb3c50b5f12d889cad0e9257d7a9d15447"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/NumPHP/NumPHP/zipball/f329edfb3c50b5f12d889cad0e9257d7a9d15447",
+                "reference": "f329edfb3c50b5f12d889cad0e9257d7a9d15447",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "require-dev": {
+                "phpmd/phpmd": "*",
+                "phpunit/phpunit": "*",
+                "satooshi/php-coveralls": "v1.0.1",
+                "sebastian/phpcpd": "*",
+                "squizlabs/php_codesniffer": "*",
+                "symfony/console": "~2.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "NumPHP\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Gordon Lesti",
+                    "email": "info@gordonlesti.com",
+                    "homepage": "http://gordonlesti.com/",
+                    "role": "developer"
+                }
+            ],
+            "description": "Mathematical PHP library for scientific computing",
+            "homepage": "http://numphp.org/",
+            "keywords": [
+                "linalg",
+                "matrix",
+                "numeric"
+            ],
+            "time": "2016-02-18T08:04:29+00:00"
+        },
+        {
+            "name": "zeeml/algorithms",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Zeeml/Algorithms.git",
+                "reference": "e800f2778837dffffbd248f1c3dd4db4af45cb1c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Zeeml/Algorithms/zipball/e800f2778837dffffbd248f1c3dd4db4af45cb1c",
+                "reference": "e800f2778837dffffbd248f1c3dd4db4af45cb1c",
+                "shasum": ""
+            },
+            "require": {
+                "numphp/numphp": "^1.1",
+                "php": ">=7.0.0",
+                "zeeml/dataset": "dev-master"
+            },
+            "require-dev": {
+                "kanel/timer": "~1.0.0",
+                "phpspec/phpspec": "^3.4",
+                "phpunit/phpunit": "6.0.8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Zeeml\\Algorithms\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Olivier Lépine",
+                    "email": "olivier@lepine.fr"
+                },
+                {
+                    "name": "Adil El Kanabi",
+                    "email": "adil.kanabi@gmail.com"
+                }
+            ],
+            "time": "2017-07-18 15:28:25"
         }
     ],
     "packages-dev": [
@@ -1326,7 +1421,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "zeeml/algorithms": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

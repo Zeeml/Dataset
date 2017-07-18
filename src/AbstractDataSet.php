@@ -2,6 +2,7 @@
 
 namespace Zeeml\DataSet;
 
+use Zeeml\Algorithms\AlgorithmsInterface;
 use Zeeml\DataSet\Processor\ProcessorInterface;
 use Zeeml\DataSet\DataSet\Instance;
 use Zeeml\DataSet\Exception\DataSetPreparationException;
@@ -13,9 +14,11 @@ class AbstractDataSet implements DataSetInterface, \Iterator
     protected $position;
     protected $instances;
     protected $processor;
-    protected $dimensions;
-    protected $outputs;
     protected $mapper;
+    protected $rawDimensions = [];
+    protected $rawOutputs = [];
+    protected $algorithms = [];
+
 
     public function __construct(ProcessorInterface $processor)
     {
@@ -47,7 +50,12 @@ class AbstractDataSet implements DataSetInterface, \Iterator
     {
         $this->mapper = $mapper;
         $this->data = $this->get();
-        $this->instances = $this->mapper->instancesFactory($this->data, $preserveKeys);
+        foreach ($this->data as $key => &$row) {
+            $instance = $this->mapper->instanceFactory($row, $key, $preserveKeys);
+            $this->instances[] = $instance;
+            $this->rawDimensions[] = $instance->dimensions();
+            $this->rawOutputs[] = $instance->outputs();
+        }
     }
     
     /**
@@ -72,6 +80,51 @@ class AbstractDataSet implements DataSetInterface, \Iterator
     public function instance(int $key)
     {
         return isset($this->instances[$key]) ? $this->instances[$key] : false;
+    }
+
+    /**
+     * returns the list of all hte algorithms used on the dataSet
+     * @return array
+     */
+    public function algorithms(): array
+    {
+        return $this->algorithms;
+    }
+
+    /**
+     * returns the the algorithm used by name
+     * @param string $algorithmName
+     * @return AlgorithmsInterface if any, null otherwise
+     */
+    public function algorithm(string $algorithmName)
+    {
+        return $this->algorithms[$algorithmName] ?? null;
+    }
+
+
+    public function addAlgorithm(AlgorithmsInterface $algorithm): DataSetInterface
+    {
+        $this->algorithms[get_class($algorithm)] = $algorithm;
+
+        return $this;
+    }
+
+    /**
+     * returns the prepared dimensions in an array
+     * @return array
+     */
+    public function rawDimensions(): array
+    {
+        return $this->rawDimensions;
+    }
+
+    /**
+     * returns the prepared outputs in an array
+     * @return array
+     */
+    public function rawOutputs(): array
+    {
+        return $this->rawOutputs;
     }
 
     /**

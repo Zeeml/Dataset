@@ -7,9 +7,7 @@ use Zeeml\DataSet\Exception\DataSetPreparationException;
 class Mapper
 {
     protected $dimensionKeys;
-    
     protected $outputKeys;
-    
     protected $hash;
     
     public function __construct(array $dimensionKeys, array $outputKeys)
@@ -19,34 +17,29 @@ class Mapper
         $this->hash = hash('sha256', implode($dimensionKeys) . implode($outputKeys));
     }
     
-    public function instancesFactory(array $data, bool $preserveKeys = false)
+    public function instanceFactory(array $dataRow, bool $preserveKeys = false): Instance
     {
-        $_ = [];
+        $dimensions = $outputs = [];
 
-        foreach ($data as $key => $val) {
-            
-            $dimensions = $outputs = [];
-            
-            foreach ($this->dimensionKeys as $dKey) {
-                if (! isset($val[$dKey])) {
-                    throw new DataSetPreparationException("No data on key $dKey");
-                }
-                $dimensions[$preserveKeys ? $dKey : count($dimensions)] = $val[$dKey];
+        foreach ($this->dimensionKeys as $dKey) {
+            if (! isset($dataRow[$dKey])) {
+                throw new DataSetPreparationException("No data on key $dKey");
             }
-            
-            if (count($dimensions) == 0) {
-                throw new DataSetPreparationException(
-                    sprintf("Data entry %d has wrong parameters count", $key)
-                );
-            }
-
-            foreach ($this->outputKeys as $oKey) {
-                $outputs[$preserveKeys ? $oKey : count($outputs)] = $val[$oKey];
-            }
-            
-            $_[$key] = new Instance($dimensions, $outputs);
+            $dimensions[] = $dataRow[$dKey];
         }
-        
-        return $_;
+
+        if (count($dimensions) == 0) {
+            throw new DataSetPreparationException('Data entry has wrong parameters count');
+        }
+
+        foreach ($this->outputKeys as $oKey) {
+            $outputs[] = $dataRow[$oKey];
+        }
+
+        if (count($outputs) == 0) {
+            throw new DataSetPreparationException('Data entry has wrong parameters count');
+        }
+
+       return new Instance($dimensions, $outputs);
     }
 }

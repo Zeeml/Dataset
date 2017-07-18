@@ -7,7 +7,7 @@ class Instance
     protected $dimensions;
     protected $outputs;
     protected $results;
-    
+
     /**
      * Class constructor
      * @param array $dimensions

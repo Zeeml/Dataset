@@ -6,6 +6,7 @@ use Zeeml\DataSet\Processor\AbstractProcessor;
 use Zeeml\DataSet\DataSet\Instance;
 use Zeeml\DataSet\DataSet\Mapper;
 use Zeeml\DataSet\Processor\CsvProcessor;
+use Zeeml\Algorithms\Prediction\Linear\SimpleLinearRegression;
 
 /**
  * DataSet test case.
@@ -14,7 +15,7 @@ class DataSetTest extends TestCase
 {
     /**
      *
-     * @var DataSetFactory
+     * @var \Zeeml\DataSet\DataSet
      */
     private $dataset;
 
@@ -113,7 +114,39 @@ class DataSetTest extends TestCase
         
         // there is no line 10
         $this->assertFalse($this->dataset->instance(10));
-        
+
+        $this->assertEquals(
+            $this->dataset->rawDimensions(),
+            [
+                [1, 'A'],
+                [2, 'B'],
+                [3, 'C '],
+                [4, 'D'],
+                [5, 'E'],
+                [6, 'F'],
+                [7, 'G'],
+                [8, 'H'],
+                [9, 'I'],
+                [10, 'J'],
+            ]
+        );
+
+        $this->assertEquals(
+            $this->dataset->rawOutputs(),
+            [
+                ['I'],
+                ['II'],
+                ['III'],
+                ['IV'],
+                ['V'],
+                ['VI'],
+                ['VII'],
+                ['VIII'],
+                ['IX'],
+                ['X'],
+            ]
+        );
+
     }
     
     /**
@@ -124,5 +157,18 @@ class DataSetTest extends TestCase
     {
         $mapper = new Mapper([3], [1]); // no key 3 in fixture
         $this->dataset->prepare($mapper);
+    }
+
+    public function test_save_algorithms()
+    {
+        $this->assertTrue(is_array($this->dataset->algorithms()));
+        $this->assertEmpty($this->dataset->algorithms('Test'));
+
+        $this->dataset->addAlgorithm(new SimpleLinearRegression());
+
+        $this->assertInstanceOf(SimpleLinearRegression::class, $this->dataset->algorithm(SimpleLinearRegression::class));
+
+        $this->assertCount(1, $this->dataset->algorithms());
+
     }
 }
