@@ -79,6 +79,21 @@ class InstanceTest extends TestCase
     /**
      * Tests Instance->result()
      */
+    public function addResult()
+    {
+        $this->instance->addResult('test', ['value1' => 1]);
+        $this->assertEquals($this->instance->results(), ['test' => ['value1' => 1]]);
+
+        $this->instance->addResult('test', ['value2' => 1]);
+        $this->assertEquals($this->instance->results(), ['test' => ['value1' => 1, 'value2' => 1]]);
+
+        $this->instance->addResult('test2', ['value1' => 1]);
+        $this->assertEquals($this->instance->results(), ['test' => ['value1' => 1, 'value2' => 1], 'test2' => ['value1' => 1]]);
+    }
+
+    /**
+     * Tests Instance->result()
+     */
     public function testResult()
     {
         // TODO Auto-generated InstanceTest->testResult()

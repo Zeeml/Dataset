@@ -64,7 +64,7 @@ class Instance
      */
     public function addResult(string $key, $result)
     {
-        $this->results[$key] = $result;
+        $this->results[$key] = array_merge($this->results[$key] ?? [], $result);
 
         return $this;
     }
