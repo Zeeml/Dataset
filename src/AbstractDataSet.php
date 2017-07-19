@@ -57,6 +57,20 @@ class AbstractDataSet implements DataSetInterface, \Iterator
             $this->rawOutputs[] = $instance->outputs();
         }
     }
+
+    /**
+     * Getter for the mapper used
+     * @return Mapper
+     * @throws DataSetPreparationException
+     */
+    public function mapper(): Mapper
+    {
+        if (! $this->mapper instanceof Mapper) {
+            throw new DataSetPreparationException("prepare() method must be called prior any mapper() call");
+        }
+
+        return $this->mapper;
+    }
     
     /**
      * Return an array of data instances

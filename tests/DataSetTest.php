@@ -93,6 +93,15 @@ class DataSetTest extends TestCase
     {
         $this->dataset->instances();
     }
+
+    /**
+     * @test
+     * @expectedException Zeeml\DataSet\Exception\DataSetPreparationException
+     */
+    public function direct_call_to_function_mapper()
+    {
+        $this->dataset->mapper();
+    }
     
     /**
      * @test
@@ -101,6 +110,9 @@ class DataSetTest extends TestCase
     {
         $mapper = new Mapper([0,1], [2]);
         $this->dataset->prepare($mapper);
+
+        $this->assertInstanceOf(Mapper::class, $this->dataset->mapper());
+
         $this->assertInternalType('array', $this->dataset->instances());
         $this->assertEquals(10, count($this->dataset->instances()));
 
