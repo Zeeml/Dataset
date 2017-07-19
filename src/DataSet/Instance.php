@@ -6,7 +6,7 @@ class Instance
 {
     protected $dimensions;
     protected $outputs;
-    protected $results;
+    protected $results = [];
 
     /**
      * Class constructor
