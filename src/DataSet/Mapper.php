@@ -42,4 +42,22 @@ class Mapper
 
        return new Instance($dimensions, $outputs);
     }
+
+    /**
+     * Getter for the output keys
+     * @return array
+     */
+    public function outputKeys(): array
+    {
+        return $this->outputKeys;
+    }
+
+    /**
+     * Getter for the dimension keys
+     * @return array
+     */
+    public function dimensionKeys(): array
+    {
+        return $this->dimensionKeys;
+    }
 }
