@@ -23,10 +23,13 @@ class ArrayProcessor extends AbstractProcessor
      *
      * @return ProcessorInterface
      */
-    public function read(): ProcessorInterface
+    public function read(): array
     {
-        $this->data = [];
+        if ( isset($this->data)) {
+            return $this->data;
+        }
 
+        $this->data = [];
         foreach ($this->source as &$row) {
             //checking if the source corresponds to the wanted format
             if (array_filter($row, 'is_scalar') == $row) {
@@ -34,7 +37,7 @@ class ArrayProcessor extends AbstractProcessor
             }
         }
 
-        return $this;
+        return $this->data;
     }
 
     public function write(): bool

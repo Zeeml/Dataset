@@ -17,7 +17,7 @@ class DataSetTest extends TestCase
      *
      * @var \Zeeml\DataSet\DataSet
      */
-    private $dataset;
+    private $dataSet;
 
     /**
      * Prepares the environment before running a test.
@@ -25,7 +25,7 @@ class DataSetTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->dataset = DataSetFactory::create( __DIR__ . '/fixtures/data.csv');
+        $this->dataSet = DataSetFactory::create( __DIR__ . '/fixtures/data.csv');
     }
 
     /**
@@ -33,102 +33,40 @@ class DataSetTest extends TestCase
      */
     protected function tearDown()
     {
-        $this->dataset = null;
+        $this->dataSet = null;
         parent::tearDown();
     }
 
     /**
      * @test
      */
-    public function method_size_returns_an_integer()
+    public function dataset_is_iterable()
     {
-        $this->assertEquals(10, $this->dataset->size());
+        $this->assertInstanceOf(\Iterator::class, $this->dataSet);
     }
 
-    /**
-     * @test
-     */
-    public function method_get_returns_a_data_array()
-    {
-        $this->assertInternalType('array', $this->dataset->get());
-        $this->assertEquals(10, count($this->dataset->get()));
-        $this->assertEquals(
-            [
-                [1, 'A', 'I'],
-                [2, 'B', 'II'],
-                [3, 'C ' , 'III'],
-                [4, 'D', 'IV'],
-                [5, 'E', 'V'],
-                [6, 'F', 'VI'],
-                [7, 'G', 'VII'],
-                [8, 'H', 'VIII'],
-                [9, 'I', 'IX'],
-                [10, 'J','X'],
-            ],
-            $this->dataset->get()
-        );
-    }
-    
-    /**
-     * @test
-     */
-    public function method_processor_returns_an_instance_of_a_processor()
-    {
-        $this->assertInstanceOf(AbstractProcessor::class, $this->dataset->processor());
-    }
-
-    /**
-     * @test
-     */
-    public function processor_is_a_csv_processor()
-    {
-        $this->assertInstanceOf(CsvProcessor::class, $this->dataset->processor());
-    }
-    
-    /**
-     * @test
-     * @expectedException Zeeml\DataSet\Exception\DataSetPreparationException
-     */
-    public function direct_call_to_function_instances_fails()
-    {
-        $this->dataset->instances();
-    }
-
-    /**
-     * @test
-     * @expectedException Zeeml\DataSet\Exception\DataSetPreparationException
-     */
-    public function direct_call_to_function_mapper()
-    {
-        $this->dataset->mapper();
-    }
-    
     /**
      * @test
      */
     public function method_prepare_sets_a_proper_array_of_instances()
     {
         $mapper = new Mapper([0,1], [2]);
-        $this->dataset->prepare($mapper);
+        $this->dataSet->prepare($mapper);
 
-        $this->assertInstanceOf(Mapper::class, $this->dataset->mapper());
+        $this->assertInstanceOf(Mapper::class, $this->dataSet->getMapper());
 
-        $this->assertInternalType('array', $this->dataset->instances());
-        $this->assertEquals(10, count($this->dataset->instances()));
+        $this->assertInternalType('array', $this->dataSet->getInstances());
+        $this->assertEquals(10, count($this->dataSet->getInstances()));
 
-        $this->assertInstanceOf(Instance::class, $this->dataset->instance(0));
-        
-        // any instance should contain two dimensions
-        $this->assertEquals(2, count($this->dataset->instance(0)->dimensions()));
-        
-        // any instance should contain one output
-        $this->assertEquals(1, count($this->dataset->instance(0)->outputs()));
-        
-        // there is no line 10
-        $this->assertFalse($this->dataset->instance(10));
+        foreach ($this->dataSet->getInstances() as $instance) {
+            // any instance should contain two dimensions
+            $this->assertEquals(2, count($instance->getDimensions()));
+            // any instance should contain one output
+            $this->assertEquals(1, count($instance->getOutputs()));
+        }
 
         $this->assertEquals(
-            $this->dataset->rawDimensions(),
+            $this->dataSet->getRawDimensions(),
             [
                 [1, 'A'],
                 [2, 'B'],
@@ -144,7 +82,7 @@ class DataSetTest extends TestCase
         );
 
         $this->assertEquals(
-            $this->dataset->rawOutputs(),
+            $this->dataSet->getRawOutputs(),
             [
                 ['I'],
                 ['II'],
@@ -160,7 +98,7 @@ class DataSetTest extends TestCase
         );
 
     }
-    
+
     /**
      * @test
      * @expectedException Zeeml\DataSet\Exception\DataSetPreparationException
@@ -168,19 +106,115 @@ class DataSetTest extends TestCase
     public function method_prepare_fails_whith_bad_params()
     {
         $mapper = new Mapper([3], [1]); // no key 3 in fixture
-        $this->dataset->prepare($mapper);
+        $this->dataSet->prepare($mapper);
     }
 
-    public function test_save_algorithms()
+    /**
+     * @test
+     */
+    public function method_getData_returns_a_data_array()
     {
-        $this->assertTrue(is_array($this->dataset->algorithms()));
-        $this->assertEmpty($this->dataset->algorithms('Test'));
+        $this->assertInternalType('array', $this->dataSet->getData());
+        $this->assertCount(10, $this->dataSet->getData());
+        $this->assertEquals(
+            [
+                [1, 'A', 'I'],
+                [2, 'B', 'II'],
+                [3, 'C ' , 'III'],
+                [4, 'D', 'IV'],
+                [5, 'E', 'V'],
+                [6, 'F', 'VI'],
+                [7, 'G', 'VII'],
+                [8, 'H', 'VIII'],
+                [9, 'I', 'IX'],
+                [10, 'J','X'],
+            ],
+            $this->dataSet->getData()
+        );
+    }
 
-        $this->dataset->addAlgorithm(new SimpleLinearRegression());
+    /**
+     * @test
+     */
+    public function method_size_returns_an_integer()
+    {
+        $this->assertEquals(10, $this->dataSet->getSize());
+    }
 
-        $this->assertInstanceOf(SimpleLinearRegression::class, $this->dataset->algorithm(SimpleLinearRegression::class));
+    /**
+     * @test
+     * @expectedException Zeeml\DataSet\Exception\DataSetPreparationException
+     */
+    public function direct_call_to_getMapper_fails()
+    {
+        $this->dataSet->getMapper();
+    }
 
-        $this->assertCount(1, $this->dataset->algorithms());
+    /**
+     * @test
+     */
+    public function call_getMapper_after_preparation_succeeds()
+    {
+        $this->dataSet->prepare(new Mapper([0, 1], [2]));
+        $this->assertInstanceOf(Mapper::class, $this->dataSet->getMapper());
+    }
 
+    /**
+     * @test
+     * @expectedException Zeeml\DataSet\Exception\DataSetPreparationException
+     */
+    public function direct_call_to_getInstances_fails()
+    {
+        $this->dataSet->getInstances();
+    }
+
+    /**
+     * @test
+     */
+    public function call_getInstances_after_preparation_succeeds()
+    {
+        $this->dataSet->prepare(new Mapper([0, 1], [2]));
+        $this->assertInternalType('array', $this->dataSet->getInstances());
+        $this->assertCount(10, $this->dataSet->getInstances());
+    }
+
+    /**
+     * @test
+     * @expectedException Zeeml\DataSet\Exception\DataSetPreparationException
+     */
+    public function direct_call_to_getRawDimensions_fails()
+    {
+        $this->dataSet->getRawDimensions();
+    }
+
+
+    /**
+     * @test
+     */
+    public function call_getRawDimensions_after_preparation_succeeds()
+    {
+        $this->dataSet->prepare(new Mapper([0, 1], [2]));
+        $this->assertInternalType('array', $this->dataSet->getRawDimensions());
+        $this->assertCount(10, $this->dataSet->getRawDimensions());
+    }
+
+    /**
+     * @test
+     * @expectedException Zeeml\DataSet\Exception\DataSetPreparationException
+     */
+    public function direct_call_to_getRawOutputs_fails()
+    {
+        $this->dataSet->getRawDimensions();
+    }
+
+
+    /**
+     * @test
+     */
+    public function call_getRawOutputs_after_preparation_succeeds()
+    {
+        $this->dataSet->prepare(new Mapper([0, 1], [2]));
+        $this->assertInternalType('array', $this->dataSet->getRawOutputs());
+        $this->assertCount(10, $this->dataSet->getRawOutputs());
     }
 }

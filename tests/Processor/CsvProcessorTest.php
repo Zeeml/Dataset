@@ -30,25 +30,8 @@ class CsvProcessorTest extends TestCase
     public function test_read()
     {
         $processor = new CsvProcessor($this->cvsFileName);
-        $processor->read();
+        $data = $processor->read();
 
-        $this->assertEquals($processor->data(), $this->expectedResult);
-    }
-
-    public function test_populate()
-    {
-        $processor = new CsvProcessor($this->cvsFileName);
-        $processor->populate();
-
-        $this->assertEquals($this->expectedResult, $processor->data());
-        $this->assertEquals(count($this->expectedResult), $processor->size());
-    }
-
-    public function test_get_data_and_size()
-    {
-        $processor = new CsvProcessor($this->cvsFileName);
-
-        $this->assertEquals($this->expectedResult, $processor->data());
-        $this->assertEquals(count($this->expectedResult), $processor->size());
+        $this->assertEquals($data, $this->expectedResult);
     }
 }

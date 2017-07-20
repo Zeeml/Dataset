@@ -4,7 +4,7 @@ namespace Zeeml\DataSet\Processor;
 
 interface ProcessorInterface
 {
-    public function read(): ProcessorInterface;
+    public function read(): array;
     
     public function write(): bool;
 }

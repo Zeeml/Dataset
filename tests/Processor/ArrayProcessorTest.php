@@ -12,39 +12,12 @@ class ArrayProcessorTest extends TestCase
      * @param $dataSource
      * @param $expectedDataSet
      */
-    public function test_read($dataSource, $expectedDataSet)
+    public function test_read(array $dataSource, array $expectedDataSet)
     {
         $processor = new ArrayProcessor($dataSource);
-        $processor->read();
+        $data = $processor->read();
 
-        $this->assertEquals($expectedDataSet, $processor->data());
-    }
-
-    /**
-     * @dataProvider getData
-     * @param $dataSource
-     * @param $expectedDataSet
-     */
-    public function test_populate($dataSource, $expectedDataSet)
-    {
-        $processor = new ArrayProcessor($dataSource);
-        $processor->populate();
-
-        $this->assertEquals($expectedDataSet, $processor->data());
-        $this->assertEquals(count($expectedDataSet), $processor->size());
-    }
-
-    /**
-     * @dataProvider getData
-     * @param $dataSource
-     * @param $expectedDataSet
-     */
-    public function test_get_data_and_size($dataSource, $expectedDataSet)
-    {
-        $processor = new ArrayProcessor($dataSource);
-
-        $this->assertEquals($expectedDataSet, $processor->data());
-        $this->assertEquals(count($expectedDataSet), $processor->size());
+        $this->assertEquals($expectedDataSet, $data);
     }
 
     public function getData()

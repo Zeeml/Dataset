@@ -2,6 +2,10 @@
 
 namespace Zeeml\DataSet\DataSet;
 
+/**
+ * Class Instance that represents a single row of a dataSet
+ * @package Zeeml\DataSet\DataSet
+ */
 class Instance
 {
     protected $dimensions;
@@ -23,7 +27,7 @@ class Instance
      * Return the instance dimensions as an array
      * @return array
      */
-    public function dimensions() : array
+    public function getDimensions() : array
     {
         return $this->dimensions;
     }
@@ -33,7 +37,7 @@ class Instance
      * @param int $index
      * @return mixed|null
      */
-    public function dimension(int $index)
+    public function getDimension(int $index)
     {
         return $this->dimensions[$index] ?? null;
     }
@@ -42,7 +46,7 @@ class Instance
      * Return the instance outputs (predictions or classifications) as an array
      * @return array
      */
-    public function outputs() : array
+    public function getOutputs() : array
     {
         return $this->outputs;
     }
@@ -52,7 +56,7 @@ class Instance
      * @param int $index
      * @return array
      */
-    public function output(int $index)
+    public function getOutput(int $index)
     {
         return $this->outputs[$index] ?? null;
     }
@@ -73,7 +77,7 @@ class Instance
      * returns all hte results
      * @return array
      */
-    public function results() : array
+    public function getResults() : array
     {
         return $this->results;
     }
@@ -83,7 +87,7 @@ class Instance
      * @param string $key
      * @return null
      */
-    public function result(string $key)
+    public function getResult(string $key)
     {
         return $this->results[$key] ?? null;
     }

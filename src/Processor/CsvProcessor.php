@@ -12,8 +12,12 @@ class CsvProcessor extends AbstractProcessor
         parent::__construct($source);
     }
 
-    public function read(): ProcessorInterface
+    public function read(): array
     {
+        if ( isset($this->data)) {
+            return $this->data;
+        }
+
         if (!is_file($this->source)) {
             throw new FileNotFoundException('File ' . $this->source . ' was not found');
         }
@@ -28,7 +32,7 @@ class CsvProcessor extends AbstractProcessor
             return true;
         });
 
-        return $this;
+        return $this->data;
     }
     
     public function write(): bool
