@@ -50,8 +50,12 @@ class DataSetTest extends TestCase
      */
     public function method_prepare_sets_a_proper_array_of_instances()
     {
+        $this->assertFalse($this->dataSet->isPrepared());
+
         $mapper = new Mapper([0,1], [2]);
         $this->dataSet->prepare($mapper);
+
+        $this->assertTrue($this->dataSet->isPrepared());
 
         $this->assertInstanceOf(Mapper::class, $this->dataSet->getMapper());
 

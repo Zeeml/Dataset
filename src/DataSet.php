@@ -15,6 +15,7 @@ class DataSet implements \Iterator
     protected $mapper;
     protected $rawDimensions;
     protected $rawOutputs;
+    protected $isPrepared;
 
 
     public function __construct(ProcessorInterface $processor)
@@ -22,6 +23,7 @@ class DataSet implements \Iterator
         $this->data = $processor->read();
         $this->size = count($this->data);
         $this->position = 0;
+        $this->isPrepared = false;
     }
 
     /**
@@ -39,6 +41,7 @@ class DataSet implements \Iterator
             $this->rawDimensions[] = $instance->getDimensions();
             $this->rawOutputs[] = $instance->getOutputs();
         }
+        $this->isPrepared = true;
     }
 
     /**
@@ -66,7 +69,7 @@ class DataSet implements \Iterator
      */
     public function getMapper(): Mapper
     {
-        if (! $this->mapper instanceof Mapper) {
+        if (! $this->isPrepared()) {
             throw new DataSetPreparationException("prepare() method must be called prior any call");
         }
 
@@ -80,7 +83,7 @@ class DataSet implements \Iterator
      */
     public function getInstances() : array
     {
-        if (! is_array($this->instances)) {
+        if (! $this->isPrepared()) {
             throw new DataSetPreparationException("prepare() method must be called prior any call");
         }
 
@@ -94,7 +97,7 @@ class DataSet implements \Iterator
      */
     public function getRawDimensions(): array
     {
-        if (! is_array($this->rawDimensions)) {
+        if (! $this->isPrepared()) {
             throw new DataSetPreparationException("prepare() method must be called prior any call");
         }
 
@@ -108,11 +111,16 @@ class DataSet implements \Iterator
      */
     public function getRawOutputs(): array
     {
-        if (! is_array($this->rawOutputs)) {
+        if (! $this->isPrepared()) {
             throw new DataSetPreparationException("prepare() method must be called prior any call");
         }
 
         return $this->rawOutputs;
+    }
+
+    public function isPrepared(): bool
+    {
+        return $this->isPrepared;
     }
 
     /**
