@@ -92,25 +92,49 @@ class DataSetFactoryTest extends TestCase
     /**
      * @test
      */
-    public function split_dataSet_should_split_it_in_two_dataSets()
+    public function must_be_able_to_split_correctly()
     {
         $array = [
             [1, 2],
-            [3, 4],
-            [5, 6],
         ];
 
         $dataSet = DataSetFactory::create($array);
         $dataSet->prepare(new DataSet\Mapper([0], [1]));
 
-        $dataSets = DataSetFactory::splitDataSet($dataSet, 0.5);
+        $dataSets = DataSetFactory::splitDataSet($dataSet, 0.8);
 
         $this->assertCount(2, $dataSets);
 
         $this->assertInstanceOf(DataSet::class, $dataSets[0]);
         $this->assertInstanceOf(DataSet::class, $dataSets[1]);
 
-        $this->assertEquals($dataSets[0]->getSize(), 2);
+        $this->assertEquals($dataSets[0]->getSize(), 1);
+        $this->assertEquals($dataSets[1]->getSize(), 0);
+    }
+
+    /**
+     * @test
+     */
+    public function split_dataSet_should_split_it_in_two_dataSets()
+    {
+        $array = [
+            [1, 2],
+            [3, 4],
+            [5, 6],
+            [7, 9]
+        ];
+
+        $dataSet = DataSetFactory::create($array);
+        $dataSet->prepare(new DataSet\Mapper([0], [1]));
+
+        $dataSets = DataSetFactory::splitDataSet($dataSet, 0.8);
+
+        $this->assertCount(2, $dataSets);
+
+        $this->assertInstanceOf(DataSet::class, $dataSets[0]);
+        $this->assertInstanceOf(DataSet::class, $dataSets[1]);
+
+        $this->assertEquals($dataSets[0]->getSize(), 3);
         $this->assertEquals($dataSets[1]->getSize(), 1);
 
 

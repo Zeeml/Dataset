@@ -52,7 +52,11 @@ class DataSetFactory
         }
 
         $data = $dataSet->getData();
-        $randomKeys = array_rand($data, ceil($dataSet->getSize() * $split));
+        $dataCount = floor($dataSet->getSize() * $split);
+        if ($dataCount == 0) {
+            $dataCount++;
+        }
+        $randomKeys = array_rand($data, $dataCount);
         $randomKeys = is_array($randomKeys)? $randomKeys : [$randomKeys];
         $data1 = $data2 = [];
 
