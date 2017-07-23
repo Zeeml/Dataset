@@ -2,6 +2,8 @@
 
 namespace Zeeml\DataSet\DataSet;
 
+use Zeeml\DataSet\DataSet\Result\ResultInterface;
+
 /**
  * Class Instance that represents a single row of a dataSet
  * @package Zeeml\DataSet\DataSet
@@ -63,10 +65,10 @@ class Instance
 
     /**
      * @param string $key
-     * @param $result
+     * @param ResultInterface $result
      * @return $this
      */
-    public function addResult(string $key, $result)
+    public function addResult(string $key, ResultInterface $result)
     {
         $this->results[$key] = $result;
 
@@ -85,7 +87,7 @@ class Instance
     /**
      * returns a result for a given key
      * @param string $key
-     * @return null
+     * @return ResultInterface|null
      */
     public function getResult(string $key)
     {

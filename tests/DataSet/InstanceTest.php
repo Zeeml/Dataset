@@ -4,6 +4,8 @@ namespace Zeeml\DataSet\Tests\DataSet;
 
 use PHPUnit\Framework\TestCase;
 use Zeeml\DataSet\DataSet\Instance;
+use Zeeml\DataSet\DataSet\Result\Classification;
+use Zeeml\DataSet\DataSet\Result\Prediction;
 
 /**
  * Instance test case.
@@ -88,18 +90,28 @@ class InstanceTest extends TestCase
     }
 
     /**
+     * @test
      * Tests Instance->result()
      */
     public function addResult()
     {
-        $this->instance->addResult('test', ['value1' => 1]);
-        $this->assertEquals($this->instance->getResults(), ['test' => ['value1' => 1]]);
+        $this->instance->addResult('test', new Prediction(2));
 
-        $this->instance->addResult('test', ['value2' => 1]);
-        $this->assertEquals($this->instance->getResults(), ['test' => ['value1' => 1, 'value2' => 1]]);
+        $results = $this->instance->getResults();
+        $this->assertCount(1, $results);
+        $this->assertInstanceOf(Prediction::class, $results['test']);
+        $this->assertEquals($results['test']->getValue(), 2);
 
-        $this->instance->addResult('test2', ['value1' => 1]);
-        $this->assertEquals($this->instance->getResults(), ['test' => ['value1' => 1, 'value2' => 1], 'test2' => ['value1' => 1]]);
+        $this->instance->addResult('test2', new Classification('A'));
+
+        $results = $this->instance->getResults();
+        $this->assertCount(2, $results);
+
+        $this->assertInstanceOf(Prediction::class, $results['test']);
+        $this->assertEquals($results['test']->getValue(), 2);
+
+        $this->assertInstanceOf(Classification::class, $results['test2']);
+        $this->assertEquals($results['test2']->getValue(), 'A');
     }
 
     /**
@@ -110,7 +122,7 @@ class InstanceTest extends TestCase
         $this->assertInternalType('array', $this->instance->getResults());
         $this->assertCount(0, $this->instance->getResults());
 
-        $this->instance->addResult('test', ['value1' => 1]);
+        $this->instance->addResult('test', new Prediction(3));
         $this->assertCount(1, $this->instance->getResults());
 
     }
@@ -121,8 +133,8 @@ class InstanceTest extends TestCase
     public function getResult_returns_an_element_of_the_array()
     {
         $this->assertNull($this->instance->getResult(0));
-        $this->instance->addResult('test', ['value1' => 1]);
-        $this->assertEquals(['value1' => 1], $this->instance->getResult('test'));
+        $this->instance->addResult('test', new Prediction('ABC'));
+        $this->assertEquals('ABC', $this->instance->getResult('test')->getValue());
     }
 }
 
