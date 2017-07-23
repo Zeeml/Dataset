@@ -3,9 +3,9 @@
 namespace Zeeml\DataSet\Tests\DataSet;
 
 use PHPUnit\Framework\TestCase;
-use Zeeml\DataSet\DataSet\Instance;
-use Zeeml\DataSet\DataSet\Result\Classification;
-use Zeeml\DataSet\DataSet\Result\Prediction;
+use Zeeml\DataSet\Core\Instance;
+use Zeeml\DataSet\Core\Result\Classification;
+use Zeeml\DataSet\Core\Result\Prediction;
 
 /**
  * Instance test case.

@@ -3,6 +3,7 @@
 namespace Zeeml\DataSet\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Zeeml\DataSet\Core\Mapper;
 use Zeeml\DataSet\DataSet;
 use Zeeml\DataSet\DataSetFactory;
 
@@ -99,7 +100,7 @@ class DataSetFactoryTest extends TestCase
         ];
 
         $dataSet = DataSetFactory::create($array);
-        $dataSet->prepare(new DataSet\Mapper([0], [1]));
+        $dataSet->prepare(new Mapper([0], [1]));
 
         $dataSets = DataSetFactory::splitDataSet($dataSet, 0.8);
 
@@ -125,7 +126,7 @@ class DataSetFactoryTest extends TestCase
         ];
 
         $dataSet = DataSetFactory::create($array);
-        $dataSet->prepare(new DataSet\Mapper([0], [1]));
+        $dataSet->prepare(new Mapper([0], [1]));
 
         $dataSets = DataSetFactory::splitDataSet($dataSet, 0.8);
 
@@ -152,7 +153,7 @@ class DataSetFactoryTest extends TestCase
         ];
 
         $dataSet = DataSetFactory::create($array);
-        $dataSet->prepare(new DataSet\Mapper([0], [1]));
+        $dataSet->prepare(new Mapper([0], [1]));
 
         $dataSets = DataSetFactory::splitDataSet($dataSet, 0.7);
 
