@@ -1,6 +1,6 @@
 <?php
 
-namespace Zeeml\DataSet\Tests\DataSet;
+namespace Zeeml\DataSet\Tests\Core;
 
 use PHPUnit\Framework\TestCase;
 use Zeeml\DataSet\Core\Instance;
