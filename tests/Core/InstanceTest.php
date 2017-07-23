@@ -1,6 +1,6 @@
 <?php
 
-namespace Zeeml\DataSet\Tests\DataSet;
+namespace Zeeml\DataSet\Tests\Core;
 
 use PHPUnit\Framework\TestCase;
 use Zeeml\DataSet\Core\Instance;
@@ -102,7 +102,7 @@ class InstanceTest extends TestCase
         $this->assertInstanceOf(Prediction::class, $results['test']);
         $this->assertEquals($results['test']->getValue(), 2);
 
-        $this->instance->addResult('test2', new Classification('A'));
+        $this->instance->addResult('test2', new Classification('A', 1));
 
         $results = $this->instance->getResults();
         $this->assertCount(2, $results);
@@ -112,6 +112,7 @@ class InstanceTest extends TestCase
 
         $this->assertInstanceOf(Classification::class, $results['test2']);
         $this->assertEquals($results['test2']->getValue(), 'A');
+        $this->assertEquals($results['test2']->getConfidence(), 1);
     }
 
     /**
