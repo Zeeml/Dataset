@@ -1,6 +1,6 @@
 <?php
 
-namespace Zeeml\DataSet\DataSet\Result;
+namespace Zeeml\DataSet\Core\Result;
 
 class Prediction extends Result
 {

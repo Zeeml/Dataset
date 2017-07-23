@@ -3,8 +3,8 @@
 namespace Zeeml\DataSet\Tests\DataSet;
 
 use PHPUnit\Framework\TestCase;
-use Zeeml\DataSet\DataSet\Instance;
-use Zeeml\DataSet\DataSet\Mapper;
+use Zeeml\DataSet\Core\Instance;
+use Zeeml\DataSet\Core\Mapper;
 
 class MapperTest extends TestCase
 {

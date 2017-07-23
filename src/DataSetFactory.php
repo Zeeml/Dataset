@@ -37,7 +37,7 @@ class DataSetFactory
     }
 
     /**
-     * creates a sub DataSet containing $split % (expressed between 0 and 1) of the dataSet sent
+     * creates a sub Core containing $split % (expressed between 0 and 1) of the dataSet sent
      * the dataSet sent MUST be prepared
      * @param DataSet $dataSet
      * @param float $split

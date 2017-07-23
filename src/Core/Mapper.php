@@ -1,12 +1,12 @@
 <?php
 
-namespace Zeeml\DataSet\DataSet;
+namespace Zeeml\DataSet\Core;
 
 use Zeeml\DataSet\Exception\DataSetPreparationException;
 
 /**
  * Class Mapper that creates instances from a single row of an array
- * @package Zeeml\DataSet\DataSet
+ * @package Zeeml\Core\Core
  */
 class Mapper
 {

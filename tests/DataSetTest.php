@@ -2,14 +2,10 @@
 
 use Zeeml\DataSet\DataSetFactory;
 use PHPUnit\Framework\TestCase;
-use Zeeml\DataSet\Processor\AbstractProcessor;
-use Zeeml\DataSet\DataSet\Instance;
-use Zeeml\DataSet\DataSet\Mapper;
-use Zeeml\DataSet\Processor\CsvProcessor;
-use Zeeml\Algorithms\Prediction\Linear\SimpleLinearRegression;
+use Zeeml\DataSet\Core\Mapper;
 
 /**
- * DataSet test case.
+ * Core test case.
  */
 class DataSetTest extends TestCase
 {

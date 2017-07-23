@@ -4,7 +4,7 @@ namespace Zeeml\DataSet;
 
 use Zeeml\DataSet\Processor\ProcessorInterface;
 use Zeeml\DataSet\Exception\DataSetPreparationException;
-use Zeeml\DataSet\DataSet\Mapper;
+use Zeeml\DataSet\Core\Mapper;
 
 class DataSet implements \Iterator
 {

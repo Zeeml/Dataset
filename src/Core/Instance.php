@@ -1,12 +1,12 @@
 <?php
 
-namespace Zeeml\DataSet\DataSet;
+namespace Zeeml\DataSet\Core;
 
-use Zeeml\DataSet\DataSet\Result\ResultInterface;
+use Zeeml\DataSet\Core\Result\ResultInterface;
 
 /**
  * Class Instance that represents a single row of a dataSet
- * @package Zeeml\DataSet\DataSet
+ * @package Zeeml\Core\Core
  */
 class Instance
 {
