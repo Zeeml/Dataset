@@ -44,6 +44,88 @@ class DataSetTest extends TestCase
     /**
      * @test
      */
+    public function default_behavior_is_preserve_keys()
+    {
+        $mapper = new Mapper([2,1], [2]);
+        $this->dataSet->prepare($mapper);
+
+        $this->assertEquals(
+            $this->dataSet->getRawDimensions(),
+            [
+                [2 => 'I',    1 => 'A'],
+                [2 => 'II',   1 => 'B'],
+                [2 => 'III',  1 => 'C '],
+                [2 => 'IV',   1 => 'D'],
+                [2 => 'V',    1 => 'E'],
+                [2 => 'VI',   1 => 'F'],
+                [2 => 'VII',  1 => 'G'],
+                [2 => 'VIII', 1 => 'H'],
+                [2 => 'IX',   1 => 'I'],
+                [2 => 'X',    1 => 'J'],
+            ]
+        );
+
+        $this->assertEquals(
+            $this->dataSet->getRawOutputs(),
+            [
+                [2 => 'I'],
+                [2 => 'II'],
+                [2 => 'III'],
+                [2 => 'IV'],
+                [2 => 'V'],
+                [2 => 'VI'],
+                [2 => 'VII'],
+                [2 => 'VIII'],
+                [2 => 'IX'],
+                [2 => 'X'],
+            ]
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function resets_keys_when_asked_to()
+    {
+        $mapper = new Mapper([2,1], [2]);
+        $this->dataSet->prepare($mapper, false);
+
+        $this->assertEquals(
+            $this->dataSet->getRawDimensions(),
+            [
+                ['I',    'A'],
+                ['II',   'B'],
+                ['III',  'C '],
+                ['IV',   'D'],
+                ['V',    'E'],
+                ['VI',   'F'],
+                ['VII',  'G'],
+                ['VIII', 'H'],
+                ['IX',   'I'],
+                ['X',    'J'],
+            ]
+        );
+
+        $this->assertEquals(
+            $this->dataSet->getRawOutputs(),
+            [
+                ['I'],
+                ['II'],
+                ['III'],
+                ['IV'],
+                ['V'],
+                ['VI'],
+                ['VII'],
+                ['VIII'],
+                ['IX'],
+                ['X'],
+            ]
+        );
+    }
+
+    /**
+     * @test
+     */
     public function method_prepare_sets_a_proper_array_of_instances()
     {
         $this->assertFalse($this->dataSet->isPrepared());
@@ -84,16 +166,16 @@ class DataSetTest extends TestCase
         $this->assertEquals(
             $this->dataSet->getRawOutputs(),
             [
-                ['I'],
-                ['II'],
-                ['III'],
-                ['IV'],
-                ['V'],
-                ['VI'],
-                ['VII'],
-                ['VIII'],
-                ['IX'],
-                ['X'],
+                [2 => 'I'],
+                [2 => 'II'],
+                [2 => 'III'],
+                [2 => 'IV'],
+                [2 => 'V'],
+                [2 => 'VI'],
+                [2 => 'VII'],
+                [2 => 'VIII'],
+                [2 => 'IX'],
+                [2 => 'X'],
             ]
         );
 

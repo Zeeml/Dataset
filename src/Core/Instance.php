@@ -10,6 +10,7 @@ use Zeeml\DataSet\Core\Result\ResultInterface;
  */
 class Instance
 {
+    protected $original;
     protected $dimensions;
     protected $outputs;
     protected $results = [];
@@ -24,7 +25,7 @@ class Instance
         $this->dimensions = $dimensions;
         $this->outputs = $outputs;
     }
-    
+
     /**
      * Return the instance dimensions as an array
      * @return array

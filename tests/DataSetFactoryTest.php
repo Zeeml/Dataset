@@ -55,7 +55,7 @@ class DataSetFactoryTest extends TestCase
         ];
 
         $dataSet = DataSetFactory::create($array);
-        DataSetFactory::splitDataSet($dataSet, -1);
+        DataSetFactory::split($dataSet, -1);
     }
 
     /**
@@ -71,7 +71,7 @@ class DataSetFactoryTest extends TestCase
         ];
 
         $dataSet = DataSetFactory::create($array);
-        DataSetFactory::splitDataSet($dataSet, 2);
+        DataSetFactory::split($dataSet, 2);
     }
 
     /**
@@ -87,7 +87,7 @@ class DataSetFactoryTest extends TestCase
         ];
 
         $dataSet = DataSetFactory::create($array);
-        DataSetFactory::splitDataSet($dataSet, 0.5);
+        DataSetFactory::split($dataSet, 0.5);
     }
 
     /**
@@ -102,7 +102,7 @@ class DataSetFactoryTest extends TestCase
         $dataSet = DataSetFactory::create($array);
         $dataSet->prepare(new Mapper([0], [1]));
 
-        $dataSets = DataSetFactory::splitDataSet($dataSet, 0.8);
+        $dataSets = DataSetFactory::split($dataSet, 0.8);
 
         $this->assertCount(2, $dataSets);
 
@@ -128,7 +128,7 @@ class DataSetFactoryTest extends TestCase
         $dataSet = DataSetFactory::create($array);
         $dataSet->prepare(new Mapper([0], [1]));
 
-        $dataSets = DataSetFactory::splitDataSet($dataSet, 0.8);
+        $dataSets = DataSetFactory::split($dataSet, 0.8);
 
         $this->assertCount(2, $dataSets);
 
@@ -155,7 +155,7 @@ class DataSetFactoryTest extends TestCase
         $dataSet = DataSetFactory::create($array);
         $dataSet->prepare(new Mapper([0], [1]));
 
-        $dataSets = DataSetFactory::splitDataSet($dataSet, 0.7);
+        $dataSets = DataSetFactory::split($dataSet, 0.7);
 
         $this->assertCount(2, $dataSets);
 
