@@ -20,43 +20,45 @@ class Mapper
      */
     public function __construct(array $dimensionKeys, array $outputKeys)
     {
-        $this->dimensionKeys = $dimensionKeys;
-        $this->outputKeys = $outputKeys;
+        $this->dimensionKeys = array_values($dimensionKeys);
+        $this->outputKeys = array_values($outputKeys);
     }
 
     /**
-     * Creates an Instane class from an array using the dimensionKeys and outputKeys specified in the construct
+     * Creates an Instance class from an array using the dimensionKeys and outputKeys specified in the construct
      * @param array $dataRow
+     * @param bool $preserveKeys
      * @return Instance
      * @throws DataSetPreparationException
      */
-    public function createInstance(array $dataRow): Instance
+    public function createInstance(array $dataRow, bool $preserveKeys): Instance
     {
         $dimensions = $outputs = [];
 
-        foreach ($this->dimensionKeys as $dKey) {
+        foreach ($this->dimensionKeys as $index => $dKey) {
             if (! isset($dataRow[$dKey])) {
                 throw new DataSetPreparationException("No data on key $dKey");
             }
-            $dimensions[] = $dataRow[$dKey];
+
+            $dimensions[$preserveKeys ? $dKey : $index] = $dataRow[$dKey];
         }
 
         if (count($dimensions) == 0) {
             throw new DataSetPreparationException('Dimensions have wrong parameters count (0) ');
         }
 
-        foreach ($this->outputKeys as $oKey) {
+        foreach ($this->outputKeys as $index => $oKey) {
             if (! isset($dataRow[$oKey])) {
                 throw new DataSetPreparationException("No data on key $oKey");
             }
-            $outputs[] = $dataRow[$oKey];
+            $outputs[$preserveKeys ? $oKey : $index] = $dataRow[$oKey];
         }
 
         if (count($outputs) == 0) {
             throw new DataSetPreparationException('outputs have wrong parameters count or not the same as dimensions');
         }
 
-       return new Instance($dimensions, $outputs);
+        return new Instance($dimensions, $outputs);
     }
 
     /**

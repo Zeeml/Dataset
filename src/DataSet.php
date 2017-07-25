@@ -29,14 +29,15 @@ class DataSet implements \Iterator
     /**
      * Prepare data to be trained
      * @param Mapper $mapper Data Mapper
+     * @param bool $preserveKeys set to true to preserve the keys of the dimensions, false to reset them
      * @throws DataSetPreparationException
      */
-    public function prepare(Mapper $mapper)
+    public function prepare(Mapper $mapper, bool $preserveKeys = true)
     {
         $this->mapper = $mapper;
         $this->instances = $this->rawDimensions = $this->rawOutputs = [];
-        foreach ($this->data as $key => &$row) {
-            $instance = $this->mapper->createInstance($row, $key);
+        foreach ($this->data as &$row) {
+            $instance = $this->mapper->createInstance($row, $preserveKeys);
             $this->instances[] = $instance;
             $this->rawDimensions[] = $instance->getDimensions();
             $this->rawOutputs[] = $instance->getOutputs();

@@ -45,7 +45,7 @@ class DataSetFactory
      * @throws WrongUsageException
      * @throws DataSetPreparationException
      */
-    public static function splitDataSet(DataSet $dataSet, float $split): array
+    public static function split(DataSet $dataSet, float $split): array
     {
         if ($split <= 0 || $split > 1) {
             throw new WrongUsageException('The split must be between 0 and 1');
