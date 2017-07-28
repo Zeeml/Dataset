@@ -13,10 +13,9 @@ class DataSet implements \Iterator
     protected $position;
     protected $instances;
     protected $mapper;
-    protected $rawDimensions;
-    protected $rawOutputs;
+    protected $dimensionsMatrix;
+    protected $outputMatrix;
     protected $isPrepared;
-
 
     public function __construct(ProcessorInterface $processor)
     {
@@ -27,7 +26,7 @@ class DataSet implements \Iterator
     }
 
     /**
-     * Prepare data to be trained
+     * Prepare data to be trained. MUST be called prior to any call
      * @param Mapper $mapper Data Mapper
      * @param bool $preserveKeys set to true to preserve the keys of the dimensions, false to reset them
      * @throws DataSetPreparationException
@@ -35,14 +34,21 @@ class DataSet implements \Iterator
     public function prepare(Mapper $mapper, bool $preserveKeys = true)
     {
         $this->mapper = $mapper;
-        $this->instances = $this->rawDimensions = $this->rawOutputs = [];
+        $this->instances = $this->dimensionsMatrix = $this->outputMatrix = [];
         foreach ($this->data as &$row) {
             $instance = $this->mapper->createInstance($row, $preserveKeys);
             $this->instances[] = $instance;
-            $this->rawDimensions[] = $instance->getDimensions();
-            $this->rawOutputs[] = $instance->getOutputs();
+            $this->dimensionsMatrix[] = $instance->getDimensions();
+            $this->outputMatrix[] = $instance->getOutputs();
         }
         $this->isPrepared = true;
+    }
+
+    public function clean()
+    {
+        foreach ($this->data as &$row) {
+
+        }
     }
 
     /**
@@ -96,13 +102,13 @@ class DataSet implements \Iterator
      * @return array
      * @throws DataSetPreparationException
      */
-    public function getRawDimensions(): array
+    public function getDimensionsMatrix(): array
     {
         if (! $this->isPrepared()) {
             throw new DataSetPreparationException("prepare() method must be called prior any call");
         }
 
-        return $this->rawDimensions;
+        return $this->dimensionsMatrix;
     }
 
     /**
@@ -110,13 +116,13 @@ class DataSet implements \Iterator
      * @return array
      * @throws DataSetPreparationException
      */
-    public function getRawOutputs(): array
+    public function getOutputMatrix(): array
     {
         if (! $this->isPrepared()) {
             throw new DataSetPreparationException("prepare() method must be called prior any call");
         }
 
-        return $this->rawOutputs;
+        return $this->outputMatrix;
     }
 
     public function isPrepared(): bool

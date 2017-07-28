@@ -50,7 +50,7 @@ class DataSetTest extends TestCase
         $this->dataSet->prepare($mapper);
 
         $this->assertEquals(
-            $this->dataSet->getRawDimensions(),
+            $this->dataSet->getDimensionsMatrix(),
             [
                 [2 => 'I',    1 => 'A'],
                 [2 => 'II',   1 => 'B'],
@@ -66,7 +66,7 @@ class DataSetTest extends TestCase
         );
 
         $this->assertEquals(
-            $this->dataSet->getRawOutputs(),
+            $this->dataSet->getOutputMatrix(),
             [
                 [2 => 'I'],
                 [2 => 'II'],
@@ -91,7 +91,7 @@ class DataSetTest extends TestCase
         $this->dataSet->prepare($mapper, false);
 
         $this->assertEquals(
-            $this->dataSet->getRawDimensions(),
+            $this->dataSet->getDimensionsMatrix(),
             [
                 ['I',    'A'],
                 ['II',   'B'],
@@ -107,7 +107,7 @@ class DataSetTest extends TestCase
         );
 
         $this->assertEquals(
-            $this->dataSet->getRawOutputs(),
+            $this->dataSet->getOutputMatrix(),
             [
                 ['I'],
                 ['II'],
@@ -148,7 +148,7 @@ class DataSetTest extends TestCase
         }
 
         $this->assertEquals(
-            $this->dataSet->getRawDimensions(),
+            $this->dataSet->getDimensionsMatrix(),
             [
                 [1, 'A'],
                 [2, 'B'],
@@ -164,7 +164,7 @@ class DataSetTest extends TestCase
         );
 
         $this->assertEquals(
-            $this->dataSet->getRawOutputs(),
+            $this->dataSet->getOutputMatrix(),
             [
                 [2 => 'I'],
                 [2 => 'II'],
@@ -264,39 +264,39 @@ class DataSetTest extends TestCase
      * @test
      * @expectedException Zeeml\DataSet\Exception\DataSetPreparationException
      */
-    public function direct_call_to_getRawDimensions_fails()
+    public function direct_call_to_getDimensionsMatrix_fails()
     {
-        $this->dataSet->getRawDimensions();
+        $this->dataSet->getDimensionsMatrix();
     }
 
 
     /**
      * @test
      */
-    public function call_getRawDimensions_after_preparation_succeeds()
+    public function call_getDimensionsMatrix_after_preparation_succeeds()
     {
         $this->dataSet->prepare(new Mapper([0, 1], [2]));
-        $this->assertInternalType('array', $this->dataSet->getRawDimensions());
-        $this->assertCount(10, $this->dataSet->getRawDimensions());
+        $this->assertInternalType('array', $this->dataSet->getDimensionsMatrix());
+        $this->assertCount(10, $this->dataSet->getDimensionsMatrix());
     }
 
     /**
      * @test
      * @expectedException Zeeml\DataSet\Exception\DataSetPreparationException
      */
-    public function direct_call_to_getRawOutputs_fails()
+    public function direct_call_to_getOutputMatrix_fails()
     {
-        $this->dataSet->getRawDimensions();
+        $this->dataSet->getDimensionsMatrix();
     }
 
 
     /**
      * @test
      */
-    public function call_getRawOutputs_after_preparation_succeeds()
+    public function call_getOutputMatrix_after_preparation_succeeds()
     {
         $this->dataSet->prepare(new Mapper([0, 1], [2]));
-        $this->assertInternalType('array', $this->dataSet->getRawOutputs());
-        $this->assertCount(10, $this->dataSet->getRawOutputs());
+        $this->assertInternalType('array', $this->dataSet->getOutputMatrix());
+        $this->assertCount(10, $this->dataSet->getOutputMatrix());
     }
 }
