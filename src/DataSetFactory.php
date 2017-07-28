@@ -20,8 +20,8 @@ class DataSetFactory
             $processorType = pathinfo($source, PATHINFO_EXTENSION);
         }
 
-        $processor = sprintf("%s\\Processor\\%sProcessor", 
-            __NAMESPACE__, 
+        $processor = sprintf("%s\\Processor\\%sProcessor",
+            __NAMESPACE__,
             ucfirst(strtolower($processorType ?? ''))
         );
 
