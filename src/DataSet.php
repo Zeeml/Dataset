@@ -22,6 +22,8 @@ class DataSet implements \Iterator
     protected $isPrepared;
     protected $average;
     protected $frequency;
+    protected $numberOfInputs;
+    protected $numberOfOutputs;
 
     public function __construct(ProcessorInterface $processor)
     {
@@ -73,8 +75,11 @@ class DataSet implements \Iterator
                 $this->size++;
                 //Save the inputs matrix
                 $this->inputsMatrix[] = $inputs;
+                $this->numberOfInputs = $this->numberOfInputs ?? count($inputs);
                 //save the output matrix
                 $this->outputsMatrix[] = $outputs;
+                $this->numberOfOutputs = $this->numberOfOutputs ?? count($outputs);
+
             }
 
             foreach ($row as $key => $value) {
@@ -224,29 +229,46 @@ class DataSet implements \Iterator
 
     public function getInputsAvg()
     {
+        $this->needsPreparation();
+
         return $this->average[0];
     }
 
     public function getInputAvg($inputIndex)
     {
+        $this->needsPreparation();
+
         return $this->average[0][$inputIndex] ?? null;
     }
 
     public function getOutputsAvg()
     {
+        $this->needsPreparation();
+
         return $this->average[1];
     }
 
     public function getOutputAvg($outputIndex)
     {
+        $this->needsPreparation();
+
         return $this->average[1][$outputIndex] ?? null;
     }
 
-    public function isPrepared(): bool
+
+    public function getNumberOfInputs()
     {
-        return $this->isPrepared;
+        $this->needsPreparation();
+
+        return $this->numberOfInputs;
     }
 
+    public function getNumberOfOutputs()
+    {
+        $this->needsPreparation();
+
+        return $this->numberOfOutputs;
+    }
     /**
      * @throws DataSetPreparationException
      */
@@ -255,6 +277,11 @@ class DataSet implements \Iterator
         if (! $this->isPrepared()) {
             throw new DataSetPreparationException("prepare() method must be called prior any call");
         }
+    }
+
+    public function isPrepared(): bool
+    {
+        return $this->isPrepared;
     }
 
     /**
