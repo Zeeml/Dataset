@@ -1,7 +1,6 @@
 <?php
 
 namespace Zeeml\DataSet\Core;
-
 use Zeeml\DataSet\Exception\DataSetPreparationException;
 
 /**
@@ -10,72 +9,78 @@ use Zeeml\DataSet\Exception\DataSetPreparationException;
  */
 class Mapper
 {
-    protected $dimensionKeys;
-    protected $outputKeys;
+    protected $dimensionParams;
+    protected $outputParams;
 
     /**
      * Mapper constructor.
-     * @param array $dimensionKeys
-     * @param array $outputKeys
+     * Expects $dimensionParams to be [ index_of_dimension => CleanPolicy , ... ]
+     * Expects $outputParams to be    [ index_of_output    => CleanPolicy , ... ]
+     * @param array $dimensionParams
+     * @param array $outputParams
      */
-    public function __construct(array $dimensionKeys, array $outputKeys)
+    public function __construct(array $dimensionParams, array $outputParams)
     {
-        $this->dimensionKeys = array_values($dimensionKeys);
-        $this->outputKeys = array_values($outputKeys);
+        $this->dimensionParams = $dimensionParams;
+        $this->outputParams = $outputParams;
     }
 
     /**
      * Creates an Instance class from an array using the dimensionKeys and outputKeys specified in the construct
      * @param array $dataRow
-     * @param bool $preserveKeys
-     * @return Instance
+     * @return null|array
      * @throws DataSetPreparationException
      */
-    public function createInstance(array $dataRow, bool $preserveKeys): Instance
+    public function map(array $dataRow)
     {
         $dimensions = $outputs = [];
 
-        foreach ($this->dimensionKeys as $index => $dKey) {
-            if (! isset($dataRow[$dKey])) {
-                throw new DataSetPreparationException("No data on key $dKey");
+        //For the dimensions
+        foreach ($this->dimensionParams as $dimKey => $cleanPolicy) {
+            //if no cleanPolicy is specified, then $cleanPolicy is the index itself, ex :  [1 => CleanPolicy::none(), 2]
+            if (! is_callable($cleanPolicy)) {
+                $dimKey = $cleanPolicy;
             }
 
-            $dimensions[$preserveKeys ? $dKey : $index] = $dataRow[$dKey];
-        }
-
-        if (count($dimensions) == 0) {
-            throw new DataSetPreparationException('Dimensions have wrong parameters count (0) ');
-        }
-
-        foreach ($this->outputKeys as $index => $oKey) {
-            if (! isset($dataRow[$oKey])) {
-                throw new DataSetPreparationException("No data on key $oKey");
+            //If no column found at the specified index throw an exception
+            if (! array_key_exists($dimKey, $dataRow)) {
+                throw new DataSetPreparationException('Column at index \'' . $dimKey . '\' not found');
             }
-            $outputs[$preserveKeys ? $oKey : $index] = $dataRow[$oKey];
+
+            $value = $dataRow[$dimKey];
+            //Check if the cleanPolicy is a callable then apply it
+            //If the policy returns false, the row is skipped and no instance is created
+            if (is_callable($cleanPolicy) && ! $cleanPolicy($value)) {
+                return null;
+            }
+
+            //add the value to the dimensions array
+            $dimensions[$dimKey] =  $value;
         }
 
-        if (count($outputs) == 0) {
-            throw new DataSetPreparationException('outputs have wrong parameters count or not the same as dimensions');
+        //Doing the same for the outputs
+        foreach ($this->outputParams as $outputKey => $cleanPolicy) {
+            //if no cleanPolicy is specified, then $cleanPolicy is probably the index itself, ex :  [1 => CleanPolicy::none(), 2]
+            if (! is_callable($cleanPolicy)) {
+                $outputKey = $cleanPolicy;
+            }
+
+            if (! array_key_exists($outputKey, $dataRow)) {
+                throw new DataSetPreparationException('Column at index \'' . $outputKey . '\' not found');
+            }
+
+            $value = $dataRow[$outputKey];
+
+            //Check if the cleanPolicy is a callable then apply it
+            //If the policy returns false, the row is skipped and no instanceis created
+            if (is_callable($cleanPolicy) && ! $cleanPolicy($value)) {
+                return null;
+            }
+
+            //add the value to the dimensions array
+            $outputs[$outputKey] =  $value;
         }
 
-        return new Instance($dimensions, $outputs);
-    }
-
-    /**
-     * Getter for the output keys
-     * @return array
-     */
-    public function getOutputKeys(): array
-    {
-        return $this->outputKeys;
-    }
-
-    /**
-     * Getter for the dimension keys
-     * @return array
-     */
-    public function getDimensionKeys(): array
-    {
-        return $this->dimensionKeys;
+        return [$dimensions, $outputs];
     }
 }

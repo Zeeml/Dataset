@@ -65,28 +65,28 @@ class InstanceTest extends TestCase
     /**
      * @test
      */
-    public function method_getDimensions_returns_an_array()
+    public function method_getInputs_returns_an_array()
     {
-        $this->assertInternalType('array', $this->instance->getDimensions());
-        $this->assertEquals([9,8,7], $this->instance->getDimensions());
+        $this->assertInternalType('array', $this->instance->getInputs());
+        $this->assertEquals([9,8,7], $this->instance->getInputs());
     }
 
     /**
      * @test
      */
-    public function method_getDimension_returns_an_element()
+    public function method_getInput_returns_an_element()
     {
-        $this->assertEquals(9, $this->instance->getDimension(0));
-        $this->assertEquals(8, $this->instance->getDimension(1));
-        $this->assertEquals(7, $this->instance->getDimension(2));
+        $this->assertEquals(9, $this->instance->getInput(0));
+        $this->assertEquals(8, $this->instance->getInput(1));
+        $this->assertEquals(7, $this->instance->getInput(2));
     }
 
     /**
      * @test
      */
-    public function method_getDimension_returns_null_if_key_not_exists()
+    public function method_getInput_returns_null_if_key_not_exists()
     {
-        $this->assertNull($this->instance->getDimension(3));
+        $this->assertNull($this->instance->getInput(3));
     }
 
     /**

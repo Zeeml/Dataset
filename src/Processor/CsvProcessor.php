@@ -24,13 +24,15 @@ class CsvProcessor extends AbstractProcessor
 
         $reader = Reader::createFromPath($this->source);
         $reader->stripBom(true);
-        $reader->setOffset(1);
-        $this->data = [];
-        $reader->each(function($line) {
-            $this->data[] = $line;
-
-            return true;
-        });
+        $results = $reader->fetchAssoc(0);
+        foreach ($results as $result) {
+            $this->data[] = array_map(
+                function($val) {
+                    return is_numeric($val)? floatval($val) : $val;
+                } ,
+                $result
+            );
+        }
 
         return $this->data;
     }
