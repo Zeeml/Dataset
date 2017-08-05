@@ -51,7 +51,7 @@ class DataSetFactory
             throw new WrongUsageException('The split must be between 0 and 1');
         }
 
-        $data = $dataSet->getData();
+        $data = $dataSet->getRawData();
         $dataCount = floor($dataSet->getSize() * $split);
         if ($dataCount == 0) {
             $dataCount++;

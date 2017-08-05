@@ -11,38 +11,56 @@ use Zeeml\DataSet\Core\Result\ResultInterface;
 class Instance
 {
     protected $original;
-    protected $dimensions;
+    protected $inputs;
     protected $outputs;
     protected $results = [];
 
     /**
      * Class constructor
-     * @param array $dimensions
+     * @param array $inputs
      * @param array $outputs
      */
-    public function __construct(array $dimensions, array $outputs)
+    public function __construct(array $inputs, array $outputs)
     {
-        $this->dimensions = $dimensions;
+        $this->inputs = $inputs;
         $this->outputs = $outputs;
     }
 
     /**
-     * Return the instance dimensions as an array
+     * Return the instance inputs as an array
      * @return array
      */
-    public function getDimensions() : array
+    public function getInputs() : array
     {
-        return $this->dimensions;
+        return $this->inputs;
     }
 
     /**
-     * Return the instance dimensions as an array
-     * @param int $index
+     * Return the instance inputs as an array
+     * @param mixed $key
      * @return mixed|null
      */
-    public function getDimension(int $index)
+    public function getInput($key)
     {
-        return $this->dimensions[$index] ?? null;
+        return $this->inputs[$key] ?? null;
+    }
+
+    /**
+     * rename a input
+     * @param mixed $oldKey
+     * @param mixed $newKey
+     * @return bool
+     */
+    public function renameInput($oldKey, $newKey): bool
+    {
+        if (array_key_exists($oldKey, $this->inputs)) {
+            $this->inputs[$newKey] = $this->inputs[$oldKey];
+            unset($this->inputs[$oldKey]);
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -56,12 +74,30 @@ class Instance
 
     /**
      * Return the instance outputs (predictions or classifications) as an array
-     * @param int $index
+     * @param mixed $key
      * @return array
      */
-    public function getOutput(int $index)
+    public function getOutput($key)
     {
-        return $this->outputs[$index] ?? null;
+        return $this->outputs[$key] ?? null;
+    }
+
+    /**
+     * rename an output
+     * @param mixed $oldKey
+     * @param mixed $newKey
+     * @return bool
+     */
+    public function renameOutput($oldKey, $newKey): bool
+    {
+        if (array_key_exists($oldKey, $this->outputs)) {
+            $this->outputs[$newKey] = $this->outputs[$oldKey];
+            unset($this->outputs[$oldKey]);
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
