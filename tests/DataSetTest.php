@@ -89,6 +89,8 @@ class DataSetTest extends TestCase
         $this->assertEquals(count($this->dataSet->getInputsMatrix()), count($this->dataSet->getOutputsMatrix()));
         $this->assertEquals(0, $this->dataSet->getInputAvg(2));
         $this->assertEquals(0, $this->dataSet->getInputAvg(1));
+        $this->assertEquals(2, $this->dataSet->getNumberOfInputs());
+        $this->assertEquals(1, $this->dataSet->getNumberOfOutputs());
         $this->assertEquals(['col3' => 0, 'col2' => 0], $this->dataSet->getInputsAvg());
         $this->assertEquals(['col3' => 0], $this->dataSet->getOutputsAvg());
         $this->assertEquals(0, $this->dataSet->getOutputAvg(2));
@@ -148,6 +150,8 @@ class DataSetTest extends TestCase
         $this->assertEquals(0, $this->dataSet->getOutputAvg(2));
         $this->assertEquals(['col3' => 0, 'col2' => 0], $this->dataSet->getInputsAvg());
         $this->assertEquals(['col3' => 0], $this->dataSet->getOutputsAvg());
+        $this->assertEquals(2, $this->dataSet->getNumberOfInputs());
+        $this->assertEquals(1, $this->dataSet->getNumberOfOutputs());
 
         foreach ($this->dataSet as $index => $instance) {
             $this->assertInstanceOf(Instance::class, $instance);
@@ -200,6 +204,8 @@ class DataSetTest extends TestCase
         $this->assertEquals(0, $this->dataSet->getOutputAvg(2));
         $this->assertEquals(['col3' => 0, 'col2' => 0], $this->dataSet->getInputsAvg());
         $this->assertEquals(['col3' => 0], $this->dataSet->getOutputsAvg());
+        $this->assertEquals(2, $this->dataSet->getNumberOfInputs());
+        $this->assertEquals(1, $this->dataSet->getNumberOfOutputs());
 
         foreach ($this->dataSet as $index => $instance) {
             $this->assertInstanceOf(Instance::class, $instance);
@@ -264,6 +270,8 @@ class DataSetTest extends TestCase
         $this->assertEquals(0, $this->dataSet->getOutputAvg(2));
         $this->assertEquals(['col3' => 0, 'col2' => 0], $this->dataSet->getInputsAvg());
         $this->assertEquals(['col3' => 0], $this->dataSet->getOutputsAvg());
+        $this->assertEquals(2, $this->dataSet->getNumberOfInputs());
+        $this->assertEquals(1, $this->dataSet->getNumberOfOutputs());
 
         foreach ($this->dataSet as $index => $instance) {
             $this->assertInstanceOf(Instance::class, $instance);
@@ -331,6 +339,8 @@ class DataSetTest extends TestCase
         $this->assertEquals(0, $this->dataSet->getOutputAvg('col3'));
         $this->assertEquals(['col1' => 4.9586776859504136, 'col3' => 0, 'col2' => 0], $this->dataSet->getInputsAvg());
         $this->assertEquals(['col3' => 0], $this->dataSet->getOutputsAvg());
+        $this->assertEquals(3, $this->dataSet->getNumberOfInputs());
+        $this->assertEquals(1, $this->dataSet->getNumberOfOutputs());
 
         foreach ($this->dataSet as $index => $instance) {
             $this->assertInstanceOf(Instance::class, $instance);
@@ -398,6 +408,8 @@ class DataSetTest extends TestCase
         $this->assertEquals(0, $this->dataSet->getOutputAvg('col3'));
         $this->assertEquals(['col1' => 4.6363636363636367, 'col3' => 0, 'col2' => 0], $this->dataSet->getInputsAvg());
         $this->assertEquals(['col3' => 0], $this->dataSet->getOutputsAvg());
+        $this->assertEquals(3, $this->dataSet->getNumberOfInputs());
+        $this->assertEquals(1, $this->dataSet->getNumberOfOutputs());
 
         foreach ($this->dataSet as $index => $instance) {
             $this->assertInstanceOf(Instance::class, $instance);
@@ -469,6 +481,8 @@ class DataSetTest extends TestCase
         $this->assertEquals(0, $this->dataSet->getOutputAvg('col3'));
         $this->assertEquals(['col1' => 4.545454545454545, 'col2' => 0], $this->dataSet->getInputsAvg());
         $this->assertEquals(['col3' => 0], $this->dataSet->getOutputsAvg());
+        $this->assertEquals(2, $this->dataSet->getNumberOfInputs());
+        $this->assertEquals(1, $this->dataSet->getNumberOfOutputs());
 
         foreach ($this->dataSet as $index => $instance) {
             $this->assertInstanceOf(Instance::class, $instance);
@@ -543,6 +557,8 @@ class DataSetTest extends TestCase
 
         $this->assertEquals($expectedInputs, $this->dataSet->getInputsMatrix());
         $this->assertEquals($expectedOutputs, $this->dataSet->getOutputsMatrix());
+        $this->assertEquals(2, $this->dataSet->getNumberOfInputs());
+        $this->assertEquals(1, $this->dataSet->getNumberOfOutputs());
 
         foreach ($this->dataSet as $index => $instance) {
             $this->assertInstanceOf(Instance::class, $instance);
