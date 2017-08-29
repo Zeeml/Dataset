@@ -48,10 +48,10 @@ class DataSet implements \Iterator
         if ($this->isPrepared()) {
             throw new DataSetPreparationException('DataSet is already prepared');
         }
-        //Split each row of the dataSet into inputs and outputs based on the mapper
-        $this->map($mapper);
+        //Split each row of the dataSet into inputs and outputs based on the mapper and the policies
         //Then re-parse the dataSet to fill in all the fields that used special policies (like Avg) and create the instances
-        $this->createInstances();
+        $this->map($mapper)->createInstances();
+
         //mark the dataSet as prepared
         $this->isPrepared = true;
     }
@@ -135,30 +135,6 @@ class DataSet implements \Iterator
         }
 
         return $this;
-    }
-
-    /**
-     * Renames the keys used for mapping
-     * @param array $mapping
-     */
-    public function rename(array $mapping)
-    {
-        $this->needsPreparation();
-
-        foreach ($this->instances as $index => $instance) {
-            foreach ($mapping as $oldKey => $newKey) {
-                $instance->renameInput($oldKey, $newKey);
-                $instance->renameOutput($oldKey, $newKey);
-                if (array_key_exists($oldKey, $this->inputsMatrix[$index])) {
-                    $this->inputsMatrix[$index][$newKey] = $this->inputsMatrix[$index][$oldKey];
-                    unset($this->inputsMatrix[$index][$oldKey]);
-                }
-                if (array_key_exists($oldKey, $this->outputsMatrix[$index])) {
-                    $this->outputsMatrix[$index][$newKey] = $this->outputsMatrix[$index][$oldKey];
-                    unset($this->outputsMatrix[$index][$oldKey]);
-                }
-            }
-        }
     }
 
     /**

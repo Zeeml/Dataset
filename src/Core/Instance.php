@@ -46,24 +46,6 @@ class Instance
     }
 
     /**
-     * rename a input
-     * @param mixed $oldKey
-     * @param mixed $newKey
-     * @return bool
-     */
-    public function renameInput($oldKey, $newKey): bool
-    {
-        if (array_key_exists($oldKey, $this->inputs)) {
-            $this->inputs[$newKey] = $this->inputs[$oldKey];
-            unset($this->inputs[$oldKey]);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Return the instance outputs (predictions or classifications) as an array
      * @return array
      */
@@ -80,24 +62,6 @@ class Instance
     public function getOutput($key)
     {
         return $this->outputs[$key] ?? null;
-    }
-
-    /**
-     * rename an output
-     * @param mixed $oldKey
-     * @param mixed $newKey
-     * @return bool
-     */
-    public function renameOutput($oldKey, $newKey): bool
-    {
-        if (array_key_exists($oldKey, $this->outputs)) {
-            $this->outputs[$newKey] = $this->outputs[$oldKey];
-            unset($this->outputs[$oldKey]);
-
-            return true;
-        }
-
-        return false;
     }
 
     /**
