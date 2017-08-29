@@ -91,4 +91,20 @@ class Mapper
 
         return $_;
     }
+
+    /**
+     * @return array
+     */
+    public function getInputsParams(): array
+    {
+        return $this->inputsParams;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOutputParams(): array
+    {
+        return $this->outputParams;
+    }
 }
