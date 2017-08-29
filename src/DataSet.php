@@ -2,7 +2,7 @@
 
 namespace Zeeml\DataSet;
 
-use Zeeml\DataSet\Core\CleanPolicy;
+use Zeeml\DataSet\Core\Policy;
 use Zeeml\DataSet\Core\Instance;
 use Zeeml\DataSet\Processor\ProcessorInterface;
 use Zeeml\DataSet\Exception\DataSetPreparationException;
@@ -79,7 +79,6 @@ class DataSet implements \Iterator
                 //save the output matrix
                 $this->outputsMatrix[] = $outputs;
                 $this->numberOfOutputs = $this->numberOfOutputs ?? count($outputs);
-
             }
 
             foreach ($row as $key => $value) {
@@ -99,7 +98,7 @@ class DataSet implements \Iterator
 
     /**
      * Create the instance based on the clean inputs and outputs
-     * Re-parse the dataSet to replace all the values that were cleaned with CleanPolicy::replaceWithAvg with the mean
+     * Re-parse the dataSet to replace all the values that were cleaned with Policy::replaceWithAvg with the mean
      * Create the instances
      *
      * @return DataSet
@@ -112,9 +111,9 @@ class DataSet implements \Iterator
         foreach ($this->inputsMatrix as $index => &$inputs) {
 
             foreach ($inputs as $dimKey => &$value) {
-                if ($value === CleanPolicy::AVG) {
+                if ($value === Policy::AVG) {
                     $value = $this->rawAverage[$dimKey];
-                } elseif ($value === CleanPolicy::MOST_COMMON) {
+                } elseif ($value === Policy::MOST_COMMON) {
                     $value = array_search(max($this->frequency[$dimKey]), $this->frequency[$dimKey]) ? : 0;
                 }
                 $this->average[0][$dimKey] = $this->average[0][$dimKey] ?? 0;
@@ -122,9 +121,9 @@ class DataSet implements \Iterator
             }
 
             foreach ($this->outputsMatrix[$index] as $outputKey => &$value) {
-                if ($value === CleanPolicy::AVG) {
+                if ($value === Policy::AVG) {
                     $value = $this->rawAverage[$outputKey];
-                } elseif ($value === CleanPolicy::MOST_COMMON) {
+                } elseif ($value === Policy::MOST_COMMON) {
                     $value = array_search(max($this->frequency[$outputKey]), $this->frequency[$outputKey]) ? : 0;
                 }
 
@@ -138,6 +137,10 @@ class DataSet implements \Iterator
         return $this;
     }
 
+    /**
+     * Renames the keys used for mapping
+     * @param array $mapping
+     */
     public function rename(array $mapping)
     {
         $this->needsPreparation();

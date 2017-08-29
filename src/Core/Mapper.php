@@ -14,8 +14,8 @@ class Mapper
 
     /**
      * Mapper constructor.
-     * Expects $dimensionParams to be [ index_of_dimension => CleanPolicy , ... ]
-     * Expects $outputParams to be    [ index_of_output    => CleanPolicy , ... ]
+     * Expects $dimensionParams to be [ index_of_dimension => [Policy1, Policy2, ...]  ]
+     * Expects $outputParams to be    [ index_of_output    => [Policy1] ]
      * @param array $dimensionParams
      * @param array $outputParams
      */
@@ -27,60 +27,68 @@ class Mapper
 
     /**
      * Creates an Instance class from an array using the dimensionKeys and outputKeys specified in the construct
-     * @param array $dataRow
+     * @param array $row
      * @return null|array
      * @throws DataSetPreparationException
      */
-    public function map(array $dataRow)
+    public function map(array &$row)
     {
-        $dimensions = $outputs = [];
+        $dimensions = $this->parse($this->dimensionParams, $row);
+        $outputs = $this->parse($this->outputParams, $row);
 
-        //For the dimensions
-        foreach ($this->dimensionParams as $dimKey => $cleanPolicy) {
-            //if no cleanPolicy is specified, then $cleanPolicy is the index itself, ex :  [1 => CleanPolicy::none(), 2]
-            if (! is_callable($cleanPolicy)) {
-                $dimKey = $cleanPolicy;
+
+        return $dimensions && $outputs ? [$dimensions, $outputs] : null;
+    }
+
+    public function parse(&$params, &$row)
+    {
+        $_ = [];
+        foreach ($params as $key => $policies) {
+
+            //if one Policy is specified, turn it into an array
+            if (is_callable($policies)) {
+                $policies = [$policies];
+            }
+
+            //if the policies is not an array, then no Policy was specified, the Policy is the index itself (example: new Mapper(['col1'], ['col2']))
+            if (! is_array($policies)) {
+                $key = $policies;
+                $policies = [Policy::none()];
             }
 
             //If no column found at the specified index throw an exception
-            if (! array_key_exists($dimKey, $dataRow)) {
-                throw new DataSetPreparationException('Column at index \'' . $dimKey . '\' not found');
+            if (! array_key_exists($key, $row)) {
+                throw new DataSetPreparationException('Column at index \'' . $key . '\' not found');
             }
 
-            $value = $dataRow[$dimKey];
-            //Check if the cleanPolicy is a callable then apply it
-            //If the policy returns false, the row is skipped and no instance is created
-            if (is_callable($cleanPolicy) && ! $cleanPolicy($value)) {
+            $value = $row[$key];
+
+            //Apply all the policies one after the other and perform an && between them, if one policy returns false, the whole line is skipped
+            if (! array_reduce(
+                $policies,
+                function($current, $policy) use (&$value, &$key, &$row) {
+                    //Check if the Policy is a callable, if not the line is skipped
+                    if (!is_callable($policy)) {
+                        return false;
+                    }
+                    //Ssave the old value in order to put the old one back and not the new one
+                    $originalValue = $value;
+                    //Execute the policy which might change the value and/or the key
+                    $result = $policy($value, $key);
+                    //If the key is altered, create a new key ( for example : array = ['col1' => 1, 'col2' => 2] , 'col1' was renamed into 'element1' then = array = ['col1' => 1, 'col2' => 2, 'element1' => 1] )
+                    $row[$key] = $originalValue;
+
+                    return $current && $result;
+                },
+                true //start with $current == true
+            )) {
                 return null;
             }
 
             //add the value to the dimensions array
-            $dimensions[$dimKey] =  $value;
+            $_[$key] =  $value;
         }
 
-        //Doing the same for the outputs
-        foreach ($this->outputParams as $outputKey => $cleanPolicy) {
-            //if no cleanPolicy is specified, then $cleanPolicy is probably the index itself, ex :  [1 => CleanPolicy::none(), 2]
-            if (! is_callable($cleanPolicy)) {
-                $outputKey = $cleanPolicy;
-            }
-
-            if (! array_key_exists($outputKey, $dataRow)) {
-                throw new DataSetPreparationException('Column at index \'' . $outputKey . '\' not found');
-            }
-
-            $value = $dataRow[$outputKey];
-
-            //Check if the cleanPolicy is a callable then apply it
-            //If the policy returns false, the row is skipped and no instanceis created
-            if (is_callable($cleanPolicy) && ! $cleanPolicy($value)) {
-                return null;
-            }
-
-            //add the value to the dimensions array
-            $outputs[$outputKey] =  $value;
-        }
-
-        return [$dimensions, $outputs];
+        return $_;
     }
 }

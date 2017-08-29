@@ -3,7 +3,7 @@
 use Zeeml\DataSet\DataSetFactory;
 use PHPUnit\Framework\TestCase;
 use Zeeml\DataSet\Core\Mapper;
-use Zeeml\DataSet\Core\CleanPolicy;
+use Zeeml\DataSet\Core\Policy;
 use Zeeml\DataSet\Core\Instance;
 
 /**
@@ -109,7 +109,7 @@ class DataSetTest extends TestCase
     public function applying_none_policy_does_nothing()
     {
         //preserving keys
-        $mapper = new Mapper(['col3' => CleanPolicy::none(),'col2' => CleanPolicy::none()], ['col3' => CleanPolicy::none()]);
+        $mapper = new Mapper(['col3' => Policy::none(),'col2' => Policy::none()], ['col3' => Policy::none()]);
         $this->dataSet->prepare($mapper);
 
         $expectedInputs = [
@@ -167,7 +167,7 @@ class DataSetTest extends TestCase
     public function applying_skip_policy_remove_empty_lines()
     {
         //preserving keys
-        $mapper = new Mapper(['col3' => CleanPolicy::skip(), 'col2' => CleanPolicy::skip()], ['col3' => CleanPolicy::skip()]);
+        $mapper = new Mapper(['col3' => Policy::skip(), 'col2' => Policy::skip()], ['col3' => Policy::skip()]);
         $this->dataSet->prepare($mapper);
 
         $expectedInputs = [
@@ -223,11 +223,11 @@ class DataSetTest extends TestCase
         //preserving keys
         $mapper = new Mapper(
             [
-                'col3' => CleanPolicy::replaceWith('TEST1'),
-                'col2' => CleanPolicy::replaceWith('TEST2')
+                'col3' => Policy::replaceWith('TEST1'),
+                'col2' => Policy::replaceWith('TEST2')
             ],
             [
-                'col3' => CleanPolicy::replaceWith('TEST3')
+                'col3' => Policy::replaceWith('TEST3')
             ]
         );
         $this->dataSet->prepare($mapper);
@@ -289,12 +289,12 @@ class DataSetTest extends TestCase
         //preserving keys
         $mapper = new Mapper(
             [
-                'col1' => CleanPolicy::replaceWithAvg(),
-                'col3' => CleanPolicy::replaceWithAvg(),
-                'col2' => CleanPolicy::replaceWithAvg(),
+                'col1' => Policy::replaceWithAvg(),
+                'col3' => Policy::replaceWithAvg(),
+                'col2' => Policy::replaceWithAvg(),
             ],
             [
-                'col3' => CleanPolicy::replaceWithAvg(),
+                'col3' => Policy::replaceWithAvg(),
             ]
         );
 
@@ -358,12 +358,12 @@ class DataSetTest extends TestCase
         //preserving keys
         $mapper = new Mapper(
             [
-                'col1' => CleanPolicy::replaceWithMostCommon(),
-                'col3' => CleanPolicy::replaceWithMostCommon(),
-                'col2' => CleanPolicy::replaceWithMostCommon(),
+                'col1' => Policy::replaceWithMostCommon(),
+                'col3' => Policy::replaceWithMostCommon(),
+                'col2' => Policy::replaceWithMostCommon(),
             ],
             [
-                'col3' => CleanPolicy::replaceWithMostCommon(),
+                'col3' => Policy::replaceWithMostCommon(),
             ]
         );
 
@@ -523,9 +523,16 @@ class DataSetTest extends TestCase
     public function should_be_able_to_rename_indexes()
     {
         //Preserving keys
-        $mapper = new Mapper(['col3', 'col2'], ['col3']);
+        $mapper = new Mapper(
+            [
+                'col3' => Policy::rename('Roman numbers'),
+                'col2' => Policy::rename('Latin alphabet'),
+            ],
+            [
+                'col3' => Policy::rename('Roman numbers'),
+            ]
+        );
         $this->dataSet->prepare($mapper);
-        $this->dataSet->rename(['col1' => 'Arab numbers', 'col2' => 'Latin alphabet', 'col3' => 'Roman numbers']);
 
         $expectedInputs = [
             ['Roman numbers' => 'I',    'Latin alphabet' => 'A'],
@@ -566,7 +573,62 @@ class DataSetTest extends TestCase
             $this->assertEquals($expectedOutputs[$index], $instance->getOutputs());
 
         }
+    }
 
+    /**
+     * @test
+     */
+    public function should_be_able_to_mix_policies()
+    {
+        //Preserving keys
+        $mapper = new Mapper(
+            [
+                'col3' => [Policy::rename('Roman numbers'), Policy::skip()],
+                'col2' => [Policy::rename('Latin alphabet'), Policy::replaceWithMostCommon()],
+            ],
+            [
+                'col3' => [Policy::rename('Roman numbers outputs')],
+            ]
+        );
+        $this->dataSet->prepare($mapper);
+
+        $expectedInputs = [
+            ['Roman numbers' => 'I',    'Latin alphabet' => 'A'],
+            ['Roman numbers' => 'II',   'Latin alphabet' => 'B'],
+            ['Roman numbers' => 'III',  'Latin alphabet' => 'C '],
+            ['Roman numbers' => 'IV',   'Latin alphabet' => 'D'],
+            ['Roman numbers' => 'V',    'Latin alphabet' => 'A'],
+            ['Roman numbers' => 'VII',  'Latin alphabet' => 'G'],
+            ['Roman numbers' => 'VIII', 'Latin alphabet' => 'H'],
+            ['Roman numbers' => 'IX',   'Latin alphabet' => 'I'],
+            ['Roman numbers' => 'X',    'Latin alphabet' => 'J'],
+            ['Roman numbers' => 'I',    'Latin alphabet' => 'A'],
+        ];
+
+        $expectedOutputs = [
+            ['Roman numbers outputs' => 'I'],
+            ['Roman numbers outputs' => 'II'],
+            ['Roman numbers outputs' => 'III'],
+            ['Roman numbers outputs' => 'IV'],
+            ['Roman numbers outputs' => 'V'],
+            ['Roman numbers outputs' => 'VII'],
+            ['Roman numbers outputs' => 'VIII'],
+            ['Roman numbers outputs' => 'IX'],
+            ['Roman numbers outputs' => 'X'],
+            ['Roman numbers outputs' => 'I'],
+        ];
+
+        $this->assertEquals($expectedInputs, $this->dataSet->getInputsMatrix());
+        $this->assertEquals($expectedOutputs, $this->dataSet->getOutputsMatrix());
+        $this->assertEquals(2, $this->dataSet->getNumberOfInputs());
+        $this->assertEquals(1, $this->dataSet->getNumberOfOutputs());
+
+        foreach ($this->dataSet as $index => $instance) {
+            $this->assertInstanceOf(Instance::class, $instance);
+            $this->assertEquals($expectedInputs[$index], $instance->getInputs());
+            $this->assertEquals($expectedOutputs[$index], $instance->getOutputs());
+
+        }
     }
 
     /**
