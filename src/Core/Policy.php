@@ -12,7 +12,7 @@ class Policy
     const AVG = Policy::class . '::AVG';
     const MOST_COMMON = Policy::class . '::MOST_COMMON';
     /**
-     * No policy : no matter the value of the dimension or the output, it will be kept as is
+     * No policy : no matter the value of the input or the output, it will be kept as is
      * @return callable
      */
     public static function none(): callable
@@ -23,7 +23,7 @@ class Policy
     }
 
     /**
-     * Skip policy : ignore the row if the corresponding dimension or output are empty
+     * Skip policy : ignore the row if the corresponding input or output are empty
      * @return callable
      */
     public static function skip(): callable
@@ -38,7 +38,7 @@ class Policy
     }
 
     /**
-     * replaceWith policy : if empty the value of the dimension or the output will be replaced by the given replacement
+     * replaceWith policy : if empty the value of the input or the output will be replaced by the given replacement
      * @param $replacement
      * @return callable
      */
@@ -54,7 +54,7 @@ class Policy
     }
 
     /**
-     * replaceWithAvg policy : if empty the value of the dimension or the output will be replaced by the average value after other cleaners are run
+     * replaceWithAvg policy : if empty the value of the input or the output will be replaced by the average value after other cleaners are run
      * (
      * @return callable
      */
@@ -70,7 +70,7 @@ class Policy
     }
 
     /**
-     * replaceWithMostCommon policy : if empty the value of the dimension or the output will be replaced by the most common value (the one that occurs the most)
+     * replaceWithMostCommon policy : if empty the value of the input or the output will be replaced by the most common value (the one that occurs the most)
      * (
      * @return callable
      */

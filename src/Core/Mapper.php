@@ -9,35 +9,35 @@ use Zeeml\DataSet\Exception\DataSetPreparationException;
  */
 class Mapper
 {
-    protected $dimensionParams;
+    protected $inputsParams;
     protected $outputParams;
 
     /**
      * Mapper constructor.
-     * Expects $dimensionParams to be [ index_of_dimension => [Policy1, Policy2, ...]  ]
+     * Expects $inputsParams to be [ index_of_input => [Policy1, Policy2, ...]  ]
      * Expects $outputParams to be    [ index_of_output    => [Policy1] ]
-     * @param array $dimensionParams
+     * @param array $inputsParams
      * @param array $outputParams
      */
-    public function __construct(array $dimensionParams, array $outputParams)
+    public function __construct(array $inputsParams, array $outputParams)
     {
-        $this->dimensionParams = $dimensionParams;
+        $this->inputsParams = $inputsParams;
         $this->outputParams = $outputParams;
     }
 
     /**
-     * Creates an Instance class from an array using the dimensionKeys and outputKeys specified in the construct
+     * Creates an Instance class from an array using the inputKeys and outputKeys specified in the construct
      * @param array $row
      * @return null|array
      * @throws DataSetPreparationException
      */
     public function map(array &$row)
     {
-        $dimensions = $this->parse($this->dimensionParams, $row);
+        $inputs = $this->parse($this->inputsParams, $row);
         $outputs = $this->parse($this->outputParams, $row);
 
 
-        return $dimensions && $outputs ? [$dimensions, $outputs] : null;
+        return $inputs && $outputs ? [$inputs, $outputs] : null;
     }
 
     public function parse(&$params, &$row)
@@ -85,7 +85,7 @@ class Mapper
                 return null;
             }
 
-            //add the value to the dimensions array
+            //add the value to the array
             $_[$key] =  $value;
         }
 
