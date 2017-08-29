@@ -3,14 +3,14 @@
 namespace Zeeml\DataSet\Core;
 
 /**
- * Class CleanPolicy
- * Each CleanPolicy must be a callable
+ * Class Policy
+ * Each Policy must be a callable
  * the callable policy must return true if policy is applied, if it returns false
  */
-class CleanPolicy
+class Policy
 {
-    const AVG = CleanPolicy::class . '::AVG';
-    const MOST_COMMON = CleanPolicy::class . '::MOST_COMMON';
+    const AVG = Policy::class . '::AVG';
+    const MOST_COMMON = Policy::class . '::MOST_COMMON';
     /**
      * No policy : no matter the value of the dimension or the output, it will be kept as is
      * @return callable
@@ -28,7 +28,7 @@ class CleanPolicy
      */
     public static function skip(): callable
     {
-        return function (& $val) : bool {
+        return function (&$val) : bool {
             if (empty($val)) {
                 return false;
             }
@@ -44,7 +44,7 @@ class CleanPolicy
      */
     public static function replaceWith($replacement): callable
     {
-        return function (& $val) use ($replacement) : bool{
+        return function (&$val) use ($replacement) : bool{
             if (empty($val)) {
                 $val = $replacement;
             }
@@ -80,6 +80,20 @@ class CleanPolicy
             if (empty($val)) {
                 $val = self::MOST_COMMON;
             }
+
+            return true;
+        };
+    }
+
+    /**
+     * Renames a column's index
+     * @param $newName
+     * @return callable
+     */
+    public static function rename($newName): callable
+    {
+        return function (&$val, &$key) use ($newName) : bool {
+            $key = $newName;
 
             return true;
         };

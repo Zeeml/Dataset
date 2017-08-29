@@ -43,17 +43,36 @@ There is no limit to the number of inputs and outputs to pick from the entry
 
 <b>If a key does not exist it will throw an exception.</b>
 
-# Cleaning the dataSet
+# Manipulating the dataSet
 
-You can apply a "Cleaning Policy" for each one of the indexes you are picking from the raw data:
+In order to manipulate and change the values of the dataSet (cleaning, renaming ...) you
+can apply a "Policy".
 
-    $mapper = new Mapper(['name' => CleanPolicy::skip(), 2], [1 => CleanPolicy::replaceWithAvg(), 0]);
+A Policy is called when creating the Mapper.
+Each column can define multiple Policies :
+
+    $dataSet = DataSetFactory::create(
+          [
+              [180, 'Male'],
+              [177, 'Female'],
+              [170, ''],
+              [183, 'Male'],
+          ]
+    );
+    $mapper = new Mapper(
+        [
+            0 => [Policy::replaceWithAvg(), Policy::rename('height')], 
+        ], 
+        [
+            1 => [Policy::skip()]
+        ]
+    );
     $dataSet->prepare($mapper);
  
 
 ###Supported policies :
 
--   <b>CleanPolicy::skip()</b> : If the value at the corresponding index is empty (NULL, false, '') the whole row will be skipped
+-   <b>Policy::skip()</b> : If the value at the corresponding index is empty (NULL, false, '') the whole row will be skipped
 
     Example :
         
@@ -65,7 +84,7 @@ You can apply a "Cleaning Policy" for each one of the indexes you are picking fr
         ];
         
         $dataSet =  DataSetFactory::create($data);
-        $mapper = new Mapper([0, 1 => CleanPolicy::skip()], [2 => CleanPolicy::skip()]);
+        $mapper = new Mapper([0, 1 => Policy::skip()], [2 => Policy::skip()]);
         $dataSet->prepare($mapper);
         
         will use the following Inputs/Outputs :
@@ -82,7 +101,7 @@ You can apply a "Cleaning Policy" for each one of the indexes you are picking fr
             [9],
         ]   
                 
--   <b>CleanPolicy::replaceWith(<value>)</b> : If the value at the corresponding index is empty (NULL, false, '') it will be replaced with the given value
+-   <b>Policy::replaceWith(<value>)</b> : If the value at the corresponding index is empty (NULL, false, '') it will be replaced with the given value
 
     Example :
         
@@ -94,7 +113,7 @@ You can apply a "Cleaning Policy" for each one of the indexes you are picking fr
         ];
         
         $dataSet =  DataSetFactory::create($data);
-        $mapper = new Mapper([0, 1 => CleanPolicy::replaceWith('Unknown')], [2 => CleanPolicy::replaceWith(-1)]);
+        $mapper = new Mapper([0, 1 => Policy::replaceWith('Unknown')], [2 => Policy::replaceWith(-1)]);
         $dataSet->prepare($mapper);
         
         will use the following Inputs/Outputs :
@@ -115,7 +134,7 @@ You can apply a "Cleaning Policy" for each one of the indexes you are picking fr
             [9]
         ] 
                 
--   <b>CleanPolicy::replaceWithAvg()</b> : The empty values will be replaced with the average value of that column calculated from the original DataSet.
+-   <b>Policy::replaceWithAvg()</b> : The empty values will be replaced with the average value of that column calculated from the original DataSet.
 
     Example :
         
@@ -127,7 +146,7 @@ You can apply a "Cleaning Policy" for each one of the indexes you are picking fr
         ];
         
         $dataSet =  DataSetFactory::create($data);
-        $mapper = new Mapper([0 => CleanPolicy::replaceWithAvg(), 1 => CleanPolicy::skip()], [2 => CleanPolicy::replaceWithAvg()]);
+        $mapper = new Mapper([0 => Policy::replaceWithAvg(), 1 => Policy::skip()], [2 => Policy::replaceWithAvg()]);
         $dataSet->prepare($mapper);
         
         will use the following Inputs/Outputs :
@@ -146,7 +165,7 @@ You can apply a "Cleaning Policy" for each one of the indexes you are picking fr
             [9],
         ]   
                                                                         ]
--   <b>CleanPolicy::replaceWithMostCommon()</b> : The empty values will be replaced with the most common value (the value that occurs the most)
+-   <b>Policy::replaceWithMostCommon()</b> : The empty values will be replaced with the most common value (the value that occurs the most)
     If multiple values have the same frequency, one is taken randomly.
     
     Example :
@@ -159,7 +178,7 @@ You can apply a "Cleaning Policy" for each one of the indexes you are picking fr
         ];
         
         $dataSet =  DataSetFactory::create($data);
-        $mapper = new Mapper([0=> CleanPolicy::replaceWithMostCommon(), 1 => CleanPolicy::skip()], [2]);
+        $mapper = new Mapper([0=> Policy::replaceWithMostCommon(), 1 => Policy::skip()], [2]);
         $dataSet->prepare($mapper);
         
         will use the following Inputs/Outputs :
@@ -177,7 +196,58 @@ You can apply a "Cleaning Policy" for each one of the indexes you are picking fr
             [null],
             [9],
         ]
+
+-   <b>Policy::custom(<callable>)</b> : create your own Policy
+
+    the callable function is only called when the value is empty. The callable must :
+
+    - Take in a first parameter by reference which corresponds to the value of the column upon each iteration
+    - Take in a second parameter which corresponds to the line
+    - Return true to keep the line, false to skip it
+    
+    Example :
+        
+        $data = [
+            [180, 'Male'],
+            [177, 'Female'],
+            [170, ''],
+            [183, 'Male'],
+        ];
+        
+        $dataSet =  DataSetFactory::create($data);
+        
+        $genderCleaner = function(&$value, $line) {
+            if ($line[0] > 175) {
+                $value = 'Male' ;
+            } else {
+                $value = 'Female';
+            }
+            
+            return true;
+        }
+        
+        $mapper = new Mapper([0], [1 => Policy::custom($genderCleaner)]);
+        $dataSet->prepare($mapper);
+        
+        will use the following Inputs/Outputs :
+        
+        Inputs:                                 
+        [                                        
+            [180],                               
+            [177],                               
+            [170],                                
+            [183],                                
+        ]                                      
+        
+        Outputs:
+        [
+            ['Male'],                               
+            ['Female'],                               
+            ['Female'],                                
+            ['Male'],
+        ]
                 
+                                
 ## Renaming keys of dataSet
 
 You can rename the dataSet keys :

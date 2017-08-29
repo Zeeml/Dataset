@@ -3,8 +3,7 @@
 namespace Zeeml\DataSet\Tests\Core;
 
 use PHPUnit\Framework\TestCase;
-use Zeeml\DataSet\Core\CleanPolicy;
-use Zeeml\DataSet\Core\Instance;
+use Zeeml\DataSet\Core\Policy;
 use Zeeml\DataSet\Core\Mapper;
 
 class MapperTest extends TestCase
@@ -14,13 +13,15 @@ class MapperTest extends TestCase
      */
     public function map_with_policy_none_should_return_instance()
     {
-        $mapper = new Mapper([0 => CleanPolicy::none(), 1 => CleanPolicy::none()], [2 => CleanPolicy::none()]);
+        $mapper = new Mapper([0 => Policy::none(), 1 => Policy::none()], [2 => Policy::none()]);
+        $row = [1, null, 3, 4];
 
-        $instance = $mapper->map([1, null, 3, 4]);
-        $this->assertInternalType('array', $instance);
-        $this->assertCount(2, $instance[0]);
-        $this->assertEquals([0 => 1, 1 => null], $instance[0]);
-        $this->assertEquals([2 => 3], $instance[1]);
+        list($dimensions, $outputs) = $mapper->map($row);
+        $this->assertInternalType('array', $dimensions);
+        $this->assertInternalType('array', $outputs);
+        $this->assertCount(2, $dimensions);
+        $this->assertEquals([0 => 1, 1 => null], $dimensions);
+        $this->assertEquals([2 => 3], $outputs);
 
     }
 
@@ -29,9 +30,10 @@ class MapperTest extends TestCase
      */
     public function map_with_skip_policy_should_return_null_for_empty_values()
     {
-        $mapper = new Mapper([0 => CleanPolicy::skip(), 1 => CleanPolicy::skip()], [2 => CleanPolicy::skip()]);
+        $mapper = new Mapper([0 => Policy::skip(), 1 => Policy::skip()], [2 => Policy::skip()]);
+        $row = [1, null, 3, 4];
 
-        $instance = $mapper->map([1, null, 3, 4]);
+        $instance = $mapper->map($row);
         $this->assertNull($instance);
     }
 
@@ -40,11 +42,13 @@ class MapperTest extends TestCase
      */
     public function map_with_skip_policy_should_return_instance_if_no_empty_values()
     {
-        $mapper = new Mapper([0 => CleanPolicy::skip(), 1 => CleanPolicy::skip()], [2 => CleanPolicy::skip()]);
-        $instance = $mapper->map([1, 2, 3, 4]);
-        $this->assertInternalType('array', $instance);
-        $this->assertEquals([0 => 1, 1 => 2], $instance[0]);
-        $this->assertEquals([2 => 3], $instance[1]);
+        $mapper = new Mapper([0 => Policy::skip(), 1 => Policy::skip()], [2 => Policy::skip()]);
+        $row = [1, 2, 3, 4];
+        list($dimensions, $outputs) = $mapper->map($row);
+        $this->assertInternalType('array', $dimensions);
+        $this->assertInternalType('array', $outputs);
+        $this->assertEquals([0 => 1, 1 => 2], $dimensions);
+        $this->assertEquals([2 => 3], $outputs);
     }
 
     /**
@@ -54,21 +58,23 @@ class MapperTest extends TestCase
     {
         $mapper = new Mapper(
             [
-                0 => CleanPolicy::replaceWith('A'),
-                1 => CleanPolicy::replaceWith('B'),
-                3 => CleanPolicy::replaceWith('C'),
+                0 => Policy::replaceWith('A'),
+                1 => Policy::replaceWith('B'),
+                3 => Policy::replaceWith('C'),
             ],
             [
-                1 => CleanPolicy::replaceWith('D'),
-                2 => CleanPolicy::replaceWith('E'),
+                1 => Policy::replaceWith('D'),
+                2 => Policy::replaceWith('E'),
 
             ]
         );
 
-        $instance = $mapper->map([1, null, 3, null]);
-        $this->assertInternalType('array', $instance);
-        $this->assertEquals([0 => 1, 1 => 'B', 3 => 'C'], $instance[0]);
-        $this->assertEquals([1 => 'D', 2 => 3], $instance[1]);
+        $row = [1, null, 3, null];
+        list($dimensions, $outputs) = $mapper->map($row);
+        $this->assertInternalType('array', $dimensions);
+        $this->assertInternalType('array', $outputs);
+        $this->assertEquals([0 => 1, 1 => 'B', 3 => 'C'], $dimensions);
+        $this->assertEquals([1 => 'D', 2 => 3], $outputs);
     }
 
     /**
@@ -78,20 +84,84 @@ class MapperTest extends TestCase
     {
         $mapper = new Mapper(
             [
-                0 => CleanPolicy::replaceWithAvg(),
-                1 => CleanPolicy::replaceWithAvg(),
-                3 => CleanPolicy::replaceWithAvg(),
+                0 => Policy::replaceWithAvg(),
+                1 => Policy::replaceWithAvg(),
+                3 => Policy::replaceWithAvg(),
             ],
             [
-                1 => CleanPolicy::replaceWithAvg(),
-                2 => CleanPolicy::replaceWithAvg(),
+                1 => Policy::replaceWithAvg(),
+                2 => Policy::replaceWithAvg(),
 
             ]
         );
 
-        $instance = $mapper->map([1, null, 3, null]);
-        $this->assertInternalType('array', $instance);
-        $this->assertEquals([0 => 1, 1 => CleanPolicy::AVG, 3 => CleanPolicy::AVG], $instance[0]);
-        $this->assertEquals([1 => CleanPolicy::AVG, 2 => 3], $instance[1]);
+        $row = [1, null, 3, null];
+        list($dimensions, $outputs) = $mapper->map($row);
+        $this->assertInternalType('array', $dimensions);
+        $this->assertInternalType('array', $outputs);
+        $this->assertEquals([0 => 1, 1 => Policy::AVG, 3 => Policy::AVG], $dimensions);
+        $this->assertEquals([1 => Policy::AVG, 2 => 3], $outputs);
     }
+
+    /**
+     * @test
+     */
+    public function map_with_different_policies_should_all_work()
+    {
+        $mapper = new Mapper(
+            [
+                0 => [Policy::replaceWithAvg(), Policy::rename('Dimension 0')],
+                1 => [Policy::replaceWithAvg(), Policy::rename('Dimension 1')],
+                3 => [Policy::replaceWithMostCommon(), Policy::rename('Dimension 2')],
+            ],
+            [
+                1 => [Policy::replaceWithAvg(), Policy::rename('Output 0')],
+                2 => [Policy::replaceWithAvg(), Policy::rename('Output 1')],
+            ]
+        );
+
+        $row = [1, null, 3, null];
+        list($dimensions, $outputs) = $mapper->map($row);
+        $this->assertInternalType('array', $dimensions);
+        $this->assertInternalType('array', $outputs);
+        $this->assertEquals(
+            [
+                'Dimension 0' => 1,
+                'Dimension 1' => Policy::AVG,
+                'Dimension 2' => Policy::MOST_COMMON,
+            ],
+            $dimensions
+        );
+        $this->assertEquals(
+            [
+                'Output 0' => Policy::AVG,
+                'Output 1' => 3,
+            ],
+            $outputs
+        );
+    }
+    /**
+     * @test
+     */
+    public function map_with_different_policies_and_skip_should_skip()
+    {
+        $mapper = new Mapper(
+            [
+                0 => [Policy::replaceWithAvg(), Policy::rename('Dimension 0')],
+                1 => [Policy::skip(), Policy::rename('Dimension 1')],
+                3 => [Policy::replaceWithMostCommon(), Policy::rename('Dimension 2')],
+            ],
+            [
+                1 => [Policy::replaceWithAvg(), Policy::rename('Output 0')],
+                2 => [Policy::replaceWithAvg(), Policy::rename('Output 1')],
+            ]
+        );
+
+        $row = [1, null, 3, null];
+        list($dimensions, $outputs) = $mapper->map($row);
+
+        $this->assertNull($dimensions);
+        $this->assertNull($outputs);
+    }
+
 }
